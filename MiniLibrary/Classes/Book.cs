@@ -10,13 +10,13 @@ namespace MiniLibrary.Classes
     {
         public Book(int id, string title, string author)
         {
-            this.id = id;
-            this.title = title;
-            this.author = author;
+            this.Id = id;
+            this.Title = title;
+            this.Author = author;
         }
 
-        public int id {  get; set; }
-        public string title { get; set; }
-        public string author { get; set; }
+        public int Id {  get; set; }
+        public string Title { get; set; }
+        public string Author { get; set; }
     }
 }

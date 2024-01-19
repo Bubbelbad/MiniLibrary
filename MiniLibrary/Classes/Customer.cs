@@ -8,19 +8,19 @@ namespace MiniLibrary.Classes
 {
     internal class Customer
     {
-        public Customer(int id, string firstName, string lastName, string email, string status)
+        public Customer(int id, string firstName, string lastName, string email, string state)
         {
             Id = id;
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.email = email;
-            this.status = status;
+            this.FirstName = firstName;
+            this.LastName = lastName;
+            this.Email = email;
+            this.State = state;
         }
 
         public int Id { get; set; }
-        public string firstName { get; set; }
-        public string lastName { get; set; }
-        public string email { get; set; }
-        public string status { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public string State { get; set; }
     }
 }
