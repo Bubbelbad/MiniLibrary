@@ -11,10 +11,15 @@ namespace MiniLibrary.Classes
         public BorrowPeriod() { }
 
         public int id { get; set; }
+
         public DateTime startTime {  get; set; }
+
         public DateTime endTime {  get; set; }
+
         public bool isReturned { get; set; }
+
         public int bookId { get; set; }
+
         public int customerId {  get; set; }
     }
 }
