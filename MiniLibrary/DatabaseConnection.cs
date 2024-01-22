@@ -14,7 +14,7 @@ namespace MiniLibrary
         string server = "localhost";
         string database = "MiniLibrary"; 
         string username = "root"; 
-        string password = "Vintern2016.";
+        string password = "";
 
         string connectionString;
 
@@ -60,7 +60,7 @@ namespace MiniLibrary
             MySqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                Customer customer = new Customer((int)reader["id"], (string)reader["first_name"], (string)reader["last_name"], (string)reader["email"], (string)reader["state"]);
+                Customer customer = new Customer((int)reader["id"], (string)reader["first_name"], (string)reader["last_name"], (string)reader["email"], (string)reader["customer_password"], (string)reader["state"]);
                 customers.Add(customer.Id, customer);
             }
             try
@@ -86,16 +86,16 @@ namespace MiniLibrary
             return book;
         }
 
-        public Customer AddNewCustomer(string customerName, string customerLastname, string customerEmail, string customerStatus)
+        public Customer AddNewCustomer(string customerName, string customerLastname, string customerEmail, string customerPassword, string customerStatus)
         {
             MySqlConnection connection = new MySqlConnection(connectionString);
             connection.Open();
-            string query = "CALL create_new_customer(\"" + customerName + "\", \"" + customerLastname + "\", \"" + customerEmail + "\", \"" + customerStatus + "\")";
+            string query = "CALL create_new_customer(\"" + customerName + "\", \"" + customerLastname + "\", \"" + "\", \"" + customerEmail + "\", \"" +  customerPassword + "\", \"" + customerStatus + "\")";
             MySqlCommand command = new MySqlCommand(query, connection);
             MySqlDataReader reader = command.ExecuteReader();
             reader.Read();
             int customerId = (int)reader["new_id"];
-            Customer customer = new Customer(customerId, customerName, customerLastname, customerEmail, customerStatus);
+            Customer customer = new Customer(customerId, customerName, customerLastname, customerEmail, customerPassword, customerStatus);
             connection.Close();
             return customer;
         }
@@ -134,6 +134,28 @@ namespace MiniLibrary
             MySqlCommand command = new MySqlCommand(query, connection);
             int rowsAffected = command.ExecuteNonQuery();
             connection.Close();
+        }
+
+        public Dictionary<int, Book> SearchBooks(string search)
+        {
+            Dictionary<int, Book> books = new Dictionary<int, Book>();
+            MySqlConnection connection = new MySqlConnection(connectionString);
+            connection.Open();
+            string query = "SELECT * FROM book WHERE title LIKE \"%" + search +  "%\"";
+            MySqlCommand command = new MySqlCommand(query, connection);
+            MySqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                Book book = new Book((int)reader["Id"], (string)reader["Title"], (string)reader["Author"]);
+                books.Add(book.Id, book);
+            }
+            try
+            {
+                //Watch the catch
+            }
+            catch (Exception ex) { }
+            connection.Close();
+            return books;
         }
     }
 }
