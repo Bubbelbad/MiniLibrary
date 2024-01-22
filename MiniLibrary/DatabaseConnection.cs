@@ -130,7 +130,7 @@ namespace MiniLibrary
             connection.Open();
 
             // Adding a new connection is as easy as adding the two keys together to the link table.    
-            string query = "INSERT INTO customer_borrowed_books VALUES (" + bookKey + ", " + customerKey + ", NULL)";
+            string query = "INSERT INTO customer_has_book VALUES (" + bookKey + ", " + customerKey + ", NULL)";
             MySqlCommand command = new MySqlCommand(query, connection);
             int rowsAffected = command.ExecuteNonQuery();
             connection.Close();
