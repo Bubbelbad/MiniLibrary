@@ -27,18 +27,21 @@ namespace MiniLibrary
 
         // Saker jag behöver lösa för att få G:
         //
-        // - addBook / addCustomer (lägga till data)
+
         // - Update-function (uppdatera befintlig data)
         // - Ett LinkTable (customer_has_book, där man länkar två tabeller). 
+        //
+        // - CHECK - addBook / addCustomer (lägga till data)
         // - CHECK - Söka efter information i databasen (sökfältet) 
         // - CHECK - Ta bort data från database
 
         // Saker jag behöver lösa för att få VG:
         //
-        // - Minst en VIEW och en STORED PROCEDURE som ska användas i programmet
+        // - Minst en VIEW och en
         // - Användare som bara har tillåtelse att använda CRUD
         // - Indexering på en kolumn som används för att söka efter specifika rader
-        // - Databasen ska vara i minst 3NF
+        // - CHECK - Databasen ska vara i minst 3NF
+        // - CHECK - Minst en STORED PROCEDURE som ska användas i programmet
 
 
         DatabaseConnection databaseConnection = new DatabaseConnection();
@@ -187,11 +190,14 @@ namespace MiniLibrary
         {
             if (bookCanvas.Visibility == Visibility.Visible)
             {
-                int customerIndexToEdit = customerListBox.SelectedIndex;
-                if (customerIndexToEdit != -1)
+                int bookIndexToEdit = bookListBox.SelectedIndex;
+                bookCanvas.Visibility = Visibility.Hidden;
+                addCanvas.Visibility = Visibility.Visible;
+                if (bookIndexToEdit != -1)
                 {
-                    Customer customer = customerList[customerIndexToEdit];
-
+                    Book book = bookList[bookIndexToEdit];
+                    titleTB.Text = book.Title;
+                    authorTB.Text = book.Author;
                 }
             }
 
@@ -216,6 +222,19 @@ namespace MiniLibrary
            // string author = null;
            // Book book = databaseConnection.AddNewBook(title, author);
            // books.Add(TabIndex, book);
+        }
+
+        private void addBookBtn_Click(object sender, RoutedEventArgs e)
+        {
+            string title = titleTB.Text;
+            string author = authorTB.Text;
+            Book book = databaseConnection.AddNewBook(title, author);
+            books = databaseConnection.GetBooks();
+            bookList = books.Values.ToList();
+            bookListBox.ItemsSource = books.Values;
+            bookListBox.Items.Refresh();
+            titleTB.Text = "";
+            authorTB.Text = "";
         }
     }
 }

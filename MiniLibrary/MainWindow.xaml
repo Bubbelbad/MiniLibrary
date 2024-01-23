@@ -395,7 +395,7 @@
                 Background="Transparent"
                 Content="Name:"
                 Foreground="White" />
-            <TextBox
+            <TextBox x:Name="titleTB"
                 Grid.Row="1"
                 Grid.Column="1"
                 Width="200"
@@ -414,7 +414,7 @@
                 Content="Author:"
                 Foreground="White" />
 
-            <TextBox
+            <TextBox x:Name="authorTB"
                 Grid.Row="1"
                 Grid.Column="1"
                 Width="200"
@@ -430,7 +430,8 @@
                     Grid.Row="1"
                     Content="Add book"
                     Background="Transparent"
-                    Foreground="White" />
+                    Foreground="White"
+                    Click="addBookBtn_Click"/>
         </Canvas>
     </Grid>
 </Window>

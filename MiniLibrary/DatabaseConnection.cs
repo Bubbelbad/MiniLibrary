@@ -14,7 +14,7 @@ namespace MiniLibrary
         string server = "localhost";
         string database = "MiniLibrary"; 
         string username = "root"; 
-        string password = "";
+        string password = "Vintern2016.";
 
         string connectionString;
 
