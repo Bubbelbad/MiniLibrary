@@ -38,7 +38,6 @@
             BorderThickness="2"
             FontSize="12"
             FontWeight="Light"
-            
             KeyDown="txtInput_KeyDown"
             TextChanged="txtInput_TextChanged" />
         <TextBlock
@@ -373,7 +372,8 @@
         <Canvas
             x:Name="addCanvas"
             Grid.Row="1"
-            Grid.Column="1">
+            Grid.Column="1"
+            Visibility="Hidden">
 
             <Label
                 Grid.Row="1"
@@ -395,7 +395,8 @@
                 Background="Transparent"
                 Content="Name:"
                 Foreground="White" />
-            <TextBox x:Name="titleTB"
+            <TextBox
+                x:Name="titleTB"
                 Grid.Row="1"
                 Grid.Column="1"
                 Width="200"
@@ -414,7 +415,8 @@
                 Content="Author:"
                 Foreground="White" />
 
-            <TextBox x:Name="authorTB"
+            <TextBox
+                x:Name="authorTB"
                 Grid.Row="1"
                 Grid.Column="1"
                 Width="200"
@@ -424,14 +426,82 @@
                 Background="Transparent"
                 Foreground="White" />
 
-            <Button x:Name="addBookBtn"
-                    Margin="60,120,0,0"
-                    Grid.Column="1"
-                    Grid.Row="1"
-                    Content="Add book"
-                    Background="Transparent"
-                    Foreground="White"
-                    Click="addBookBtn_Click"/>
+            <Button
+                x:Name="addBookBtn"
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="60,120,0,0"
+                Background="Transparent"
+                Click="addBookBtn_Click"
+                Content="Add book"
+                Foreground="White" />
+        </Canvas>
+
+        <Canvas
+            x:Name="editCanvas"
+            Grid.Row="1"
+            Grid.Column="1">
+
+            <Label
+                Grid.Row="1"
+                Grid.Column="1"
+                Width="150"
+                Margin="0,10,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                Content="Edit book: "
+                Foreground="White" />
+            <Label
+                Grid.Row="1"
+                Grid.Column="1"
+                Width="45"
+                Margin="0,40,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                Content="Name:"
+                Foreground="White" />
+            <TextBox
+                x:Name="titleEditTB"
+                Grid.Row="1"
+                Grid.Column="1"
+                Width="200"
+                Margin="60,45,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                Foreground="White" />
+
+            <Label
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="0,80,0,0"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                Content="Author:"
+                Foreground="White" />
+
+            <TextBox
+                x:Name="authorEditTB"
+                Grid.Row="1"
+                Grid.Column="1"
+                Width="200"
+                Margin="60,85,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                Foreground="White" />
+
+            <Button
+                x:Name="editBookBtn"
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="60,120,0,0"
+                Background="Transparent"
+                Click="editBookBtn_Click"
+                Content="Save book"
+                Foreground="White" />
         </Canvas>
     </Grid>
 </Window>

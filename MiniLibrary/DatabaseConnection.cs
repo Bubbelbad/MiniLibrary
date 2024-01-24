@@ -86,6 +86,17 @@ namespace MiniLibrary
             return book;
         }
 
+        public int EditBook(int bookId, string bookTitle, string bookAuthor)
+        {
+            MySqlConnection connection = new MySqlConnection(connectionString);
+            connection.Open();
+            string query = "CALL edit_book(" + bookId + ", \"" + bookTitle + "\", \"" + bookAuthor + "\")";
+            MySqlCommand command = new MySqlCommand(query, connection);
+            int rowsAffected = command.ExecuteNonQuery();
+            connection.Close();
+            return rowsAffected;
+        }
+
         public Customer AddNewCustomer(string customerName, string customerLastname, string customerEmail, string customerPassword, string customerStatus)
         {
             MySqlConnection connection = new MySqlConnection(connectionString);

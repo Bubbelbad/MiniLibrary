@@ -18,26 +18,24 @@ namespace MiniLibrary
 {
     public partial class MainWindow : Window
     {
-        // 2. Koppla ihop addBook med funktionen
-        // 3. Kolla vad som behövs för att få G och gör de uppgifterna.
-        // 4. Läs på om users och deras befogenheter. De ska kunna få rättigheter direkt i databasen. 
-        // 5. Börja jobba på UserControls och tänk efter hur programmet ska se ut nu ordentligt. 
+        // 1. Kolla vad som behövs för att få G och gör de uppgifterna.
+        // 2. Läs på om users och deras befogenheter. De ska kunna få rättigheter direkt i databasen. 
+        // 3. Börja jobba på UserControls och tänk efter hur programmet ska se ut nu ordentligt. 
 
 
 
         // Saker jag behöver lösa för att få G:
         //
-
-        // - Update-function (uppdatera befintlig data)
         // - Ett LinkTable (customer_has_book, där man länkar två tabeller). 
         //
+        // - CHECK - Update-function (uppdatera befintlig data)
         // - CHECK - addBook / addCustomer (lägga till data)
         // - CHECK - Söka efter information i databasen (sökfältet) 
-        // - CHECK - Ta bort data från database
+        // - CHECK - Ta bort data från databasen
 
         // Saker jag behöver lösa för att få VG:
         //
-        // - Minst en VIEW och en
+        // - Minst en VIEW
         // - Användare som bara har tillåtelse att använda CRUD
         // - Indexering på en kolumn som används för att söka efter specifika rader
         // - CHECK - Databasen ska vara i minst 3NF
@@ -52,6 +50,8 @@ namespace MiniLibrary
         List<Customer> customerList = new List<Customer>();
         Dictionary<int, Book> searchedBooks = new Dictionary<int, Book>();
         List<Book> searchedBookList = new List<Book>();
+
+        int selectedId;
 
         public MainWindow()
         {
@@ -99,16 +99,18 @@ namespace MiniLibrary
             customerCanvas.Visibility = Visibility.Visible;
             bookCanvas.Visibility = Visibility.Hidden;
             addCanvas.Visibility = Visibility.Hidden;
+            editCanvas.Visibility = Visibility.Hidden;
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            customerCanvas.Visibility = Visibility.Hidden;
             bookCanvas.Visibility = Visibility.Visible;
+            customerCanvas.Visibility = Visibility.Hidden;
             addCanvas.Visibility = Visibility.Hidden;
+            editCanvas.Visibility = Visibility.Hidden;
         }
 
-        //Söka efter böcker: FEL EVENT !
+        //Söka efter böcker:
         private void txtInput_KeyDown(object sender, KeyEventArgs e)
         {
             if (bookCanvas.Visibility == Visibility.Visible)
@@ -188,16 +190,19 @@ namespace MiniLibrary
 
         private void editBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (bookCanvas.Visibility == Visibility.Visible)
+            Book book = bookList[bookListBox.SelectedIndex];
+            selectedId = book.Id;
+            if (editCanvas.Visibility == Visibility.Hidden)
             {
-                int bookIndexToEdit = bookListBox.SelectedIndex;
+                editCanvas.Visibility = Visibility.Visible;
                 bookCanvas.Visibility = Visibility.Hidden;
-                addCanvas.Visibility = Visibility.Visible;
-                if (bookIndexToEdit != -1)
+                customerCanvas.Visibility = Visibility.Hidden;
+                addCanvas.Visibility = Visibility.Hidden;
+                
+                if (book != null)
                 {
-                    Book book = bookList[bookIndexToEdit];
-                    titleTB.Text = book.Title;
-                    authorTB.Text = book.Author;
+                    titleEditTB.Text = book.Title;
+                    authorEditTB.Text = book.Author;
                 }
             }
 
@@ -235,6 +240,19 @@ namespace MiniLibrary
             bookListBox.Items.Refresh();
             titleTB.Text = "";
             authorTB.Text = "";
+        }
+
+        private void editBookBtn_Click(object sender, RoutedEventArgs e)
+        {
+            string title = titleEditTB.Text;
+            string author = authorEditTB.Text;
+            int row = databaseConnection.EditBook(selectedId, title, author);
+            books = databaseConnection.GetBooks();
+            bookList = books.Values.ToList();
+            bookListBox.ItemsSource = books.Values;
+            bookListBox.Items.Refresh();
+            titleEditTB.Text = "";
+            authorEditTB.Text = "";
         }
     }
 }
