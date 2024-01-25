@@ -51,12 +51,11 @@ namespace MiniLibrary
         Dictionary<int, Book> searchedBooks = new Dictionary<int, Book>();
         List<Book> searchedBookList = new List<Book>();
 
-        int selectedId;
+        int selectedId = 1;
 
         public MainWindow()
         {
             InitializeComponent();
-            LibraryProgram libraryProgram = new LibraryProgram();
             books = databaseConnection.GetBooks();
             bookList = books.Values.ToList();
             bookListBox.ItemsSource = books.Values;
@@ -94,12 +93,14 @@ namespace MiniLibrary
             }
         }
 
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             customerCanvas.Visibility = Visibility.Visible;
             bookCanvas.Visibility = Visibility.Hidden;
             addCanvas.Visibility = Visibility.Hidden;
             editCanvas.Visibility = Visibility.Hidden;
+            currentBooksCanvas.Visibility = Visibility.Hidden;
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -108,6 +109,16 @@ namespace MiniLibrary
             customerCanvas.Visibility = Visibility.Hidden;
             addCanvas.Visibility = Visibility.Hidden;
             editCanvas.Visibility = Visibility.Hidden;
+            currentBooksCanvas.Visibility = Visibility.Hidden;
+        }
+
+        private void currentLoansBtn_Click(object sender, RoutedEventArgs e)
+        {
+            currentBooksCanvas.Visibility = Visibility.Visible;
+            addCanvas.Visibility = Visibility.Hidden;
+            editCanvas.Visibility = Visibility.Hidden;
+            customerCanvas.Visibility = Visibility.Hidden;
+            bookCanvas.Visibility = Visibility.Hidden;
         }
 
         //Söka efter böcker:
@@ -117,6 +128,7 @@ namespace MiniLibrary
             {
                 customerCanvas.Visibility = Visibility.Hidden;
                 addCanvas.Visibility = Visibility.Hidden;
+                currentBooksCanvas.Visibility = Visibility.Hidden;
                 bookCanvas.Visibility = Visibility.Visible;
                 string search = txtInput.Text;
                 searchedBooks = databaseConnection.SearchBooks(search);
@@ -198,6 +210,7 @@ namespace MiniLibrary
                 bookCanvas.Visibility = Visibility.Hidden;
                 customerCanvas.Visibility = Visibility.Hidden;
                 addCanvas.Visibility = Visibility.Hidden;
+                currentBooksCanvas.Visibility = Visibility.Hidden;
                 
                 if (book != null)
                 {
@@ -253,6 +266,15 @@ namespace MiniLibrary
             bookListBox.Items.Refresh();
             titleEditTB.Text = "";
             authorEditTB.Text = "";
+        }
+
+        private void borrowBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Book book = bookList[bookListBox.SelectedIndex];
+            int bookKey = book.Id;
+            int customerKey = selectedId;
+            databaseConnection.AssignBookToCustomer(bookKey, customerKey);
+
         }
     }
 }

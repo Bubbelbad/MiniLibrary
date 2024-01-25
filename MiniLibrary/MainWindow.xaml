@@ -162,6 +162,31 @@
             Fill="White"
             Stretch="Fill" />
 
+        <Button
+            x:Name="borrowBtn"
+            Grid.Row="0"
+            Grid.Column="1"
+            Width="25"
+            Height="25"
+            Margin="357,0,0,7"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom"
+            Background="Transparent"
+            Click="borrowBtn_Click"
+            Foreground="White" />
+        <Path
+            Grid.Column="1"
+            Width="16"
+            Height="16"
+            Margin="362,0,0,10"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom"
+            Panel.ZIndex="-1"
+            Data="M3 7V5H5V4C5 2.9 5.9 2 7 2H13V9L15.5 7.5L18 9V2H19C20 2 21 3 21 4V13.8C20.1 13.3 19.1 13 18 13C14.7 13 12 15.7 12 19C12 20.1 12.3 21.1 12.8 22H7C5.9 22 5 21 5 20V19H3V17H5V13H3V11H5V7H3M5 5V7H7V5H5M5 19H7V17H5V19M5 13H7V11H5V13M17 15V18H14V20H17V23H19V20H22V18H19V15H17Z"
+            Fill="White"
+            Stretch="Fill" />
+
+
         <!--  Menu buttons  -->
         <Button
             Grid.Row="1"
@@ -181,13 +206,14 @@
             Click="Button_Click"
             Content="Customers"
             Foreground="White" />
-        <Button
+        <Button x:Name="currentLoansBtn"
             Grid.Row="1"
             Height="30"
             Margin="0,60,0,0"
             VerticalAlignment="Top"
             Background="Transparent"
             Content="Current loans"
+            Click="currentLoansBtn_Click"
             Foreground="White" />
         <Button
             Grid.Row="1"
@@ -440,7 +466,8 @@
         <Canvas
             x:Name="editCanvas"
             Grid.Row="1"
-            Grid.Column="1">
+            Grid.Column="1"
+            Visibility="Hidden">
 
             <Label
                 Grid.Row="1"
@@ -502,6 +529,79 @@
                 Click="editBookBtn_Click"
                 Content="Save book"
                 Foreground="White" />
+        </Canvas>
+
+
+        <Canvas
+            x:Name="currentBooksCanvas"
+            Grid.Row="1"
+            Grid.Column="1"
+            Visibility="Visible">
+            <Label
+                Grid.Row="1"
+                Grid.Column="1"
+                Width="20"
+                Margin="0,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                Content="Id"
+                Foreground="White" />
+            <Label
+                Grid.Row="1"
+                Grid.Column="1"
+                Width="50"
+                Margin="50,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                Content="Title"
+                Foreground="White" />
+            <Label
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="350,0,0,0"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                Content="Deadline"
+                Foreground="White" />
+            <StackPanel
+                Grid.Row="1"
+                Grid.Column="1"
+                Width="600"
+                Height="370"
+                Visibility="Visible">
+                <ListBox
+                    x:Name="currentBooksLB"
+                    Height="315"
+                    Margin="0,30,0,0"
+                    Background="Transparent"
+                    Foreground="White">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50" />
+                                    <ColumnDefinition Width="300" />
+                                    <ColumnDefinition Width="200" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Grid.Column="0"
+                                    Foreground="White"
+                                    Text="{Binding Path=Id}" />
+                                <TextBlock
+                                    Grid.Column="1"
+                                    Foreground="White"
+                                    Text="{Binding Path=Title}" />
+                                <TextBlock
+                                    Grid.Column="2"
+                                    Foreground="White"
+                                    Text="{Binding Path=Deadline}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
         </Canvas>
     </Grid>
 </Window>
