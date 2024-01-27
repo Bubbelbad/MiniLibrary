@@ -50,6 +50,7 @@ namespace MiniLibrary
         List<Customer> customerList = new List<Customer>();
         Dictionary<int, Book> searchedBooks = new Dictionary<int, Book>();
         List<Book> searchedBookList = new List<Book>();
+        List<BorrowPeriod> borrowPeriodList = new List<BorrowPeriod>();
 
         int selectedId = 1;
 
@@ -65,6 +66,12 @@ namespace MiniLibrary
             customerList = customers.Values.ToList();
             customerListBox.ItemsSource = customers.Values;
             customerListBox.Items.Refresh();
+
+            //Här hade jag tänkt att ta in resultatet från customer_borrowed_books. 
+            //Men jag vill ju också som vanlig user barta kunna se mina, men som admin kunna se valfri users boklån. 
+            databaseConnection.GetBorrowedBooks();
+            currentBooksLB.ItemsSource = borrowPeriodList;
+            currentBooksLB.Items.Refresh();
 
             Console.WriteLine("Hello world");
         }
@@ -219,7 +226,6 @@ namespace MiniLibrary
                 }
             }
 
-
             else if (customerCanvas.Visibility == Visibility.Visible)
             {
 
@@ -268,13 +274,14 @@ namespace MiniLibrary
             authorEditTB.Text = "";
         }
 
+        //The user chooses a book and borrows it. 
+        //A borrow period of a month is created in AssignBookToCustomer();
         private void borrowBtn_Click(object sender, RoutedEventArgs e)
         {
             Book book = bookList[bookListBox.SelectedIndex];
             int bookKey = book.Id;
             int customerKey = selectedId;
             databaseConnection.AssignBookToCustomer(bookKey, customerKey);
-
         }
     }
 }

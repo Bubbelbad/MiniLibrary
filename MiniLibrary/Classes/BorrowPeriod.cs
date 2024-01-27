@@ -8,13 +8,21 @@ namespace MiniLibrary.Classes
 {
     internal class BorrowPeriod
     {
-        public BorrowPeriod() { }
+        public BorrowPeriod(int id, DateTime startTime, DateTime endTime, bool isReturned, int bookId, int customerId)
+        {
+            this.Id = id;
+            this.StartTime = startTime;
+            this.EndTime = endTime;
+            this.IsReturned = isReturned;
+            this.BookId = bookId;
+            this.CustomerId = customerId;
+        }
 
-        public int id { get; set; }
-        public DateTime startTime {  get; set; }
-        public DateTime endTime {  get; set; }
-        public bool isReturned { get; set; }
-        public int bookId { get; set; }
-        public int customerId {  get; set; }
+        public int Id { get; set; }
+        public DateTime StartTime {  get; set; }
+        public DateTime EndTime {  get; set; }
+        public bool IsReturned { get; set; }
+        public int BookId { get; set; }
+        public int CustomerId {  get; set; }
     }
 }

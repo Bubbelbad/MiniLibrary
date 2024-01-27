@@ -9,6 +9,12 @@ using System.Threading.Tasks;
 
 namespace MiniLibrary
 {
+
+    //När jag loggar in, skickar jag till databasen och får tillbaka en true eller false, som gör att jag kan även logga in i applikationen? 
+    //Då behöver jag inte ha användarna sparade i själva applikationen? 
+    //
+
+
     class DatabaseConnection
     {
         string server = "localhost";
@@ -25,7 +31,7 @@ namespace MiniLibrary
                 "DATABASE=" + database + ";" +
                 "UID=" + username + ";" +
                 "PASSWORD=" + password + ";";
-            Console.WriteLine("ConnectionString: " + connectionString);
+           // Console.WriteLine("ConnectionString: " + connectionString);
         }
 
         public Dictionary<int, Book> GetBooks()
@@ -169,12 +175,21 @@ namespace MiniLibrary
             return books;
         }
 
-        public void GetBorrowedBooks(int customerKey)
+        public void GetBorrowedBooks()
         {
+            //Måste jag lägga in denna VIEW's kolumner som en egen klass? 
+            //Hur kan jag visa VIEW customer_borrowed_books i en ListBox? 
             MySqlConnection con = new MySqlConnection(connectionString);
             con.Open();
-            string query = "SELECT * FROM customer_has_book" + 
-                            
+            string query = "SELECT * FROM customer_borrowed_books;";
+            MySqlCommand command = new MySqlCommand(query, con);
+            MySqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                ((int)reader["Customer"], (string)reader["Title"], (string)reader["Author"]);
+
+            }
+            reader.Close();
         }
     }
 }
