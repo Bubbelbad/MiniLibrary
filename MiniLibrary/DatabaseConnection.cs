@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace MiniLibrary
 {
@@ -19,13 +20,32 @@ namespace MiniLibrary
     {
         string server = "localhost";
         string database = "MiniLibrary"; 
-        string username = "root"; 
-        string password = "";
+       // string username = "admin"; 
+       // string password = "admin";
+       // 
+       // string username2 = "user";
+       // string password2 = "password";
 
         string connectionString;
 
-        public DatabaseConnection()
+        public DatabaseConnection(string username, string password)
         {
+            if (username == "admin" && password == "admin")
+            {
+                username = "admin";
+                password = "admin";
+
+            }
+            else if (username == "user" && password == "password")
+            {
+                username = "user";
+                password = "password";
+            }
+            else
+            {
+                MessageBox.Show("You entered wrong credentials\nTry again!");
+            }
+
             connectionString =
                 "SERVER=" + server + ";" +
                 "DATABASE=" + database + ";" +
@@ -186,7 +206,7 @@ namespace MiniLibrary
             MySqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                ((int)reader["Customer"], (string)reader["Title"], (string)reader["Author"]);
+                //((int)reader["Customer"], (string)reader["Title"], (string)reader["Author"]);
 
             }
             reader.Close();

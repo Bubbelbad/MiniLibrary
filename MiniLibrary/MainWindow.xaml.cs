@@ -1,6 +1,7 @@
 ﻿using MiniLibrary.Classes;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -42,8 +43,7 @@ namespace MiniLibrary
         // - CHECK - Minst en STORED PROCEDURE som ska användas i programmet
 
 
-        DatabaseConnection databaseConnection = new DatabaseConnection();
-
+        DatabaseConnection databaseConnection = new DatabaseConnection("admin", "admin");
         Dictionary<int, Book> books = new Dictionary<int, Book>();
         List<Book> bookList = new List<Book>();
         Dictionary<int, Customer> customers = new Dictionary<int, Customer>();
@@ -75,7 +75,6 @@ namespace MiniLibrary
 
             Console.WriteLine("Hello world");
         }
-
 
 
         //Search bar functions:
