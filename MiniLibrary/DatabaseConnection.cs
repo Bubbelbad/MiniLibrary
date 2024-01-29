@@ -11,12 +11,6 @@ using System.Windows.Controls;
 
 namespace MiniLibrary
 {
-
-    //När jag loggar in, skickar jag till databasen och får tillbaka en true eller false, som gör att jag kan även logga in i applikationen? 
-    //Då behöver jag inte ha användarna sparade i själva applikationen? 
-    
-
-
     class DatabaseConnection
     {
         string server = "localhost";
@@ -58,7 +52,7 @@ namespace MiniLibrary
             MySqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                Book book = new Book((int)reader["Id"], (string)reader["Title"], (string)reader["Author"]);
+                Book book = new Book((int)reader["Id"], (string)reader["Title"], (string)reader["Author"], (bool)reader["available"]);
                 books.Add(book.Id, book);
             }
             try
@@ -111,25 +105,25 @@ namespace MiniLibrary
             return customerBorrowedBooks;
         }
 
-        public Book AddNewBook(string bookTitle, string bookAuthor)
+        public Book AddNewBook(string bookTitle, string bookAuthor, bool bookAvailable)
         {
             MySqlConnection connection = new MySqlConnection (connectionString);
             connection.Open();
-            string query = "CALL create_new_book(\"" + bookTitle + "\", \"" + bookAuthor + "\")";
+            string query = "CALL create_new_book(\"" + bookTitle + "\", \"" + bookAuthor + "\", \"" + bookAvailable + "\")";
             MySqlCommand command = new MySqlCommand(query, connection);
             MySqlDataReader reader = command.ExecuteReader();
             reader.Read();
             int bookId = (int)reader["new_id"];
-            Book book = new Book(bookId, bookTitle, bookAuthor);
+            Book book = new Book(bookId, bookTitle, bookAuthor, bookAvailable);
             connection.Close();
             return book;
         }
 
-        public int EditBook(int bookId, string bookTitle, string bookAuthor)
+        public int EditBook(int bookId, string bookTitle, string bookAuthor, bool available)
         {
             MySqlConnection connection = new MySqlConnection(connectionString);
             connection.Open();
-            string query = "CALL edit_book(" + bookId + ", \"" + bookTitle + "\", \"" + bookAuthor + "\")";
+            string query = "CALL edit_book(" + bookId + ", \"" + bookTitle + "\", \"" + bookAuthor + "\", \"" + available + "\")";
             MySqlCommand command = new MySqlCommand(query, connection);
             int rowsAffected = command.ExecuteNonQuery();
             connection.Close();
@@ -196,7 +190,7 @@ namespace MiniLibrary
             MySqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                Book book = new Book((int)reader["Id"], (string)reader["Title"], (string)reader["Author"]);
+                Book book = new Book((int)reader["Id"], (string)reader["Title"], (string)reader["Author"], (bool)reader["Avaliable"]);
                 books.Add(book.Id, book);
             }
             try

@@ -19,14 +19,14 @@ namespace MiniLibrary
 {
     public partial class MainWindow : Window
     {
-        // 1. Läs på om users och deras befogenheter. De ska få lämpliga rättigheter direkt i databasen (Bara kolla igenon)
-        // 2. - Fixa try/catch där normal user inte kan genomföra funktion
+        // 1.. - Fixa try/catch där normal user inte kan genomföra funktion
+        // 2. - Se till att man kan lämna tillbaka bäcker man lånat
+        // 3. - Se till att databasen sparar lånad bok som icke-available 
 
 
         // Saker jag behöver lösa för att få G:
         //
-        // - Ett LinkTable (customer_has_book, där man länkar två tabeller). 
-        //
+        // - CHECK - Ett LinkTable (customer_has_book, där man länkar två tabeller). 
         // - CHECK - Update-function (uppdatera befintlig data)
         // - CHECK - addBook / addCustomer (lägga till data)
         // - CHECK - Söka efter information i databasen (sökfältet) 
@@ -34,7 +34,7 @@ namespace MiniLibrary
 
         // Saker jag behöver lösa för att få VG:
         //
-        // - Minst en VIEW
+        // - CHECK - Minst en VIEW
         // - Indexering på en kolumn som används för att söka efter specifika rader
         // - CHECK - Användare med olika grants
         // - CHECK - Databasen ska vara i minst 3NF
@@ -70,20 +70,19 @@ namespace MiniLibrary
             customerList = customers.Values.ToList();
             customerListBox.ItemsSource = customers.Values;
             customerListBox.Items.Refresh();
-
-            //Här hade jag tänkt att ta in resultatet från customer_borrowed_books. 
-            //Men jag vill ju också som vanlig user barta kunna se mina, men som admin kunna se valfri users boklån. 
-            // selectedId = databaseConnection.GetCurrentUser();
         }
 
 
-        //Search bar functions:
+        //SEARCH BAR FUNCTIONS:
+
+        //Removes the text in the search-field
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
             txtInput.Clear();
             txtInput.Focus();
         }
 
+        //Searches for books when there is input in textbox
         private void txtInput_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (string.IsNullOrEmpty(txtInput.Text))
@@ -99,16 +98,7 @@ namespace MiniLibrary
             }
         }
 
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            customerCanvas.Visibility = Visibility.Visible;
-            bookCanvas.Visibility = Visibility.Hidden;
-            addCanvas.Visibility = Visibility.Hidden;
-            editCanvas.Visibility = Visibility.Hidden;
-            currentBooksCanvas.Visibility = Visibility.Hidden;
-        }
-
+        //Button for book-view
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             bookCanvas.Visibility = Visibility.Visible;
@@ -118,6 +108,17 @@ namespace MiniLibrary
             currentBooksCanvas.Visibility = Visibility.Hidden;
         }
 
+        //Button for customer-view
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            customerCanvas.Visibility = Visibility.Visible;
+            bookCanvas.Visibility = Visibility.Hidden;
+            addCanvas.Visibility = Visibility.Hidden;
+            editCanvas.Visibility = Visibility.Hidden;
+            currentBooksCanvas.Visibility = Visibility.Hidden;
+        }
+
+        //Button for current loans-view
         private void currentLoansBtn_Click(object sender, RoutedEventArgs e)
         {
             currentBooksLB.Items.Refresh();
@@ -143,7 +144,7 @@ namespace MiniLibrary
                 bookListBox.ItemsSource = searchedBooks.Values;
                 bookListBox.Items.Refresh();
             }
-            //Här tänkte jag lägga till en searchCustomer senare. 
+            //Här tänkte jag lägga till en searchCustomer senare. (NOT YET IMPLEMENTED)
             else if (customerCanvas.Visibility == Visibility.Visible)
             {
                 customerCanvas.Visibility = Visibility.Hidden;
@@ -158,6 +159,7 @@ namespace MiniLibrary
             
         }
 
+        //Functions to delete a book from library
         private void deleteBtn_Click(object sender, RoutedEventArgs e)
         {
             if (bookCanvas.Visibility == Visibility.Visible)
@@ -168,7 +170,6 @@ namespace MiniLibrary
                     Book book = bookList[bookIndexToDelete];
                     bookListBox.SelectedIndex = -1;
                     bool success = databaseConnection.DeleteBook(book.Id);
-
                     if(success)
                     {
                         txtInput.Text = "";
@@ -191,7 +192,6 @@ namespace MiniLibrary
                     Customer customer = customerList[customerIndexToDelete];
                     customerListBox.SelectedIndex = -1;
                     bool success = databaseConnection.DeleteCustomer(customer.Id);
-
                     if (success)
                     {
                         customerList.Remove(customer);
@@ -204,9 +204,10 @@ namespace MiniLibrary
                     }
                 }
             }
-            
         }
 
+
+        //Button to edit book in library
         private void editBtn_Click(object sender, RoutedEventArgs e)
         {
             Book book = bookList[bookListBox.SelectedIndex];
@@ -232,6 +233,8 @@ namespace MiniLibrary
             }
         }
 
+
+        //Button for add-view
         private void addBtn_Click(object sender, RoutedEventArgs e)
         {
             if (addCanvas.Visibility == Visibility.Hidden || addCanvas.Visibility == Visibility.Visible)
@@ -240,19 +243,15 @@ namespace MiniLibrary
                 customerCanvas.Visibility = Visibility.Hidden;
                 bookCanvas.Visibility = Visibility.Hidden;
             }
-
-            //Here I need to open a window / usercontrol to get the arguments for AddBook-function
-           // string title = null;
-           // string author = null;
-           // Book book = databaseConnection.AddNewBook(title, author);
-           // books.Add(TabIndex, book);
         }
 
+        //Button to commit the added book
         private void addBookBtn_Click(object sender, RoutedEventArgs e)
         {
             string title = titleTB.Text;
             string author = authorTB.Text;
-            Book book = databaseConnection.AddNewBook(title, author);
+            bool available = true;
+            Book book = databaseConnection.AddNewBook(title, author, available);
             books = databaseConnection.GetBooks();
             bookList = books.Values.ToList();
             bookListBox.ItemsSource = books.Values;
@@ -261,11 +260,13 @@ namespace MiniLibrary
             authorTB.Text = "";
         }
 
+        //Button to commit the edited book
         private void editBookBtn_Click(object sender, RoutedEventArgs e)
         {
             string title = titleEditTB.Text;
             string author = authorEditTB.Text;
-            int row = databaseConnection.EditBook(selectedId, title, author);
+            bool available = bookList[selectedId].Available;
+            int row = databaseConnection.EditBook(selectedId, title, author, available);
             books = databaseConnection.GetBooks();
             bookList = books.Values.ToList();
             bookListBox.ItemsSource = books.Values;
@@ -281,12 +282,21 @@ namespace MiniLibrary
             Book book = bookList[bookListBox.SelectedIndex];
             int bookKey = book.Id;
             int customerKey = loggedInCustomer.Id;
-            databaseConnection.AssignBookToCustomer(bookKey, customerKey);
-            CustomerBorrowedBooks cbd = new CustomerBorrowedBooks(customerKey, book.Title, DateTime.Now, DateTime.Now, false);
-            customerBorrowedBooksList.Add(cbd);
-            currentBooksLB.Items.Refresh();
+            if (book.Available == true)
+            {
+                databaseConnection.AssignBookToCustomer(bookKey, customerKey); //HERE I ALSO NEED TO CHANGE THE AVAILABILITY IN THE DATABASE !!
+                CustomerBorrowedBooks cbd = new CustomerBorrowedBooks(customerKey, book.Title, DateTime.Now, DateTime.Now, false);
+                book.Available = false;
+                customerBorrowedBooksList.Add(cbd);
+                currentBooksLB.Items.Refresh();
+            }
+            else
+            {
+                MessageBox.Show("This book is already borrowed");
+            }
         }
 
+        //Button for inlog
         private void loginBtn_Click(object sender, RoutedEventArgs e)
         {
             string email = emailLoginTB.Text;
@@ -312,6 +322,7 @@ namespace MiniLibrary
             MessageBox.Show("Wrong credentials, try again.");
         }
 
+        //Function to show the menus after logging in
         private void ShowMenu()
         {
             menuBooksBtn.Visibility = Visibility.Visible;
