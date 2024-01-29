@@ -7,52 +7,46 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace MiniLibrary
 {
 
     //När jag loggar in, skickar jag till databasen och får tillbaka en true eller false, som gör att jag kan även logga in i applikationen? 
     //Då behöver jag inte ha användarna sparade i själva applikationen? 
-    //
+    
 
 
     class DatabaseConnection
     {
         string server = "localhost";
         string database = "MiniLibrary"; 
-       // string username = "admin"; 
-       // string password = "admin";
-       // 
-       // string username2 = "user";
-       // string password2 = "password";
+        string username = "user";
+        string password = "password";
 
-        string connectionString;
+        string connectionString = "";
 
-        public DatabaseConnection(string username, string password)
+        public DatabaseConnection() 
         {
-            if (username == "admin" && password == "admin")
-            {
-                username = "admin";
-                password = "admin";
-
-            }
-            else if (username == "user" && password == "password")
-            {
-                username = "user";
-                password = "password";
-            }
-            else
-            {
-                MessageBox.Show("You entered wrong credentials\nTry again!");
-            }
-
             connectionString =
                 "SERVER=" + server + ";" +
                 "DATABASE=" + database + ";" +
                 "UID=" + username + ";" +
                 "PASSWORD=" + password + ";";
-           // Console.WriteLine("ConnectionString: " + connectionString);
         }
+
+        public DatabaseConnection(bool admin)
+        {
+            if (admin == true)
+            {
+                connectionString =
+                "SERVER=" + server + ";" +
+                "DATABASE=" + database + ";" +
+                "UID=" + "admin" + ";" +
+                "PASSWORD=" + "admin" + ";";
+            }
+        }
+
 
         public Dictionary<int, Book> GetBooks()
         {
@@ -86,7 +80,7 @@ namespace MiniLibrary
             MySqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                Customer customer = new Customer((int)reader["id"], (string)reader["first_name"], (string)reader["last_name"], (string)reader["email"], (string)reader["customer_password"], (string)reader["state"]);
+                Customer customer = new Customer((int)reader["id"], (string)reader["first_name"], (string)reader["last_name"], (string)reader["email"], (string)reader["customer_password"], (string)reader["state"], (bool)reader["admin"]);
                 customers.Add(customer.Id, customer);
             }
             try
@@ -97,6 +91,17 @@ namespace MiniLibrary
             connection.Close();
             return customers;
         }
+
+        //funderar på hur jag ska få tag på Id från den inloggade från databasen. 
+        //Behöver detta för att se Current Loans...
+      //  public int GetCurrentCustomer()
+      //  {
+      //      MySqlConnection con = new MySqlConnection(connectionString);
+      //      con.Open();
+      //      string query = "SELECT id FROM customer" + 
+      //                     "WHERE"
+      //      return int;
+      //  }
 
         public Book AddNewBook(string bookTitle, string bookAuthor)
         {
@@ -123,16 +128,16 @@ namespace MiniLibrary
             return rowsAffected;
         }
 
-        public Customer AddNewCustomer(string customerName, string customerLastname, string customerEmail, string customerPassword, string customerStatus)
+        public Customer AddNewCustomer(string customerName, string customerLastname, string customerEmail, string customerPassword, string customerStatus, bool customerAdmin)
         {
             MySqlConnection connection = new MySqlConnection(connectionString);
             connection.Open();
-            string query = "CALL create_new_customer(\"" + customerName + "\", \"" + customerLastname + "\", \"" + "\", \"" + customerEmail + "\", \"" +  customerPassword + "\", \"" + customerStatus + "\")";
+            string query = "CALL create_new_customer(\"" + customerName + "\", \"" + customerLastname + "\", \"" + "\", \"" + customerEmail + "\", \"" +  customerPassword + "\", \"" + customerStatus + "\", \"" + customerAdmin + "\")";
             MySqlCommand command = new MySqlCommand(query, connection);
             MySqlDataReader reader = command.ExecuteReader();
             reader.Read();
             int customerId = (int)reader["new_id"];
-            Customer customer = new Customer(customerId, customerName, customerLastname, customerEmail, customerPassword, customerStatus);
+            Customer customer = new Customer(customerId, customerName, customerLastname, customerEmail, customerPassword, customerStatus, customerAdmin);
             connection.Close();
             return customer;
         }
@@ -195,7 +200,7 @@ namespace MiniLibrary
             return books;
         }
 
-        public void GetBorrowedBooks()
+        public void GetBorrowedBooks(int customerId)
         {
             //Måste jag lägga in denna VIEW's kolumner som en egen klass? 
             //Hur kan jag visa VIEW customer_borrowed_books i en ListBox? 

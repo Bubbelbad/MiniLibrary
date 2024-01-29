@@ -19,10 +19,8 @@ namespace MiniLibrary
 {
     public partial class MainWindow : Window
     {
-        // 1. Kolla vad som behövs för att få G och gör de uppgifterna.
-        // 2. Läs på om users och deras befogenheter. De ska kunna få rättigheter direkt i databasen. 
-        // 3. Börja jobba på UserControls och tänk efter hur programmet ska se ut nu ordentligt. 
-
+        // 1. Läs på om users och deras befogenheter. De ska få lämpliga rättigheter direkt i databasen.
+        // 2. Skapa canvas för inlogg
 
 
         // Saker jag behöver lösa för att få G:
@@ -37,13 +35,13 @@ namespace MiniLibrary
         // Saker jag behöver lösa för att få VG:
         //
         // - Minst en VIEW
-        // - Användare som bara har tillåtelse att använda CRUD
+        // - Användare med olika grants
         // - Indexering på en kolumn som används för att söka efter specifika rader
         // - CHECK - Databasen ska vara i minst 3NF
         // - CHECK - Minst en STORED PROCEDURE som ska användas i programmet
 
 
-        DatabaseConnection databaseConnection = new DatabaseConnection("admin", "admin");
+        DatabaseConnection databaseConnection = new DatabaseConnection();
         Dictionary<int, Book> books = new Dictionary<int, Book>();
         List<Book> bookList = new List<Book>();
         Dictionary<int, Customer> customers = new Dictionary<int, Customer>();
@@ -69,11 +67,10 @@ namespace MiniLibrary
 
             //Här hade jag tänkt att ta in resultatet från customer_borrowed_books. 
             //Men jag vill ju också som vanlig user barta kunna se mina, men som admin kunna se valfri users boklån. 
-            databaseConnection.GetBorrowedBooks();
+            // selectedId = databaseConnection.GetCurrentUser();
+            databaseConnection.GetBorrowedBooks(selectedId);
             currentBooksLB.ItemsSource = borrowPeriodList;
             currentBooksLB.Items.Refresh();
-
-            Console.WriteLine("Hello world");
         }
 
 
@@ -281,6 +278,24 @@ namespace MiniLibrary
             int bookKey = book.Id;
             int customerKey = selectedId;
             databaseConnection.AssignBookToCustomer(bookKey, customerKey);
+        }
+
+        private void loginBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Customer customer = null;
+            string email = emailLoginTB.Text;
+            string password = passwordLoginTB.Text;
+            foreach (Customer cus in customerList)
+            {
+                if (email == cus.Email)
+                {
+                    customer = cus;
+                    if (customer.Admin == true)
+                    {
+                        databaseConnection = new DatabaseConnection(true);
+                    }
+                }
+            }
         }
     }
 }

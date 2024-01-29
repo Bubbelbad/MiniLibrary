@@ -8,7 +8,7 @@ namespace MiniLibrary.Classes
 {
     internal class Customer
     {
-        public Customer(int id, string firstName, string lastName, string email, string customerPassword, string state)
+        public Customer(int id, string firstName, string lastName, string email, string customerPassword, string state, bool admin)
         {
             Id = id;
             this.FirstName = firstName;
@@ -16,6 +16,7 @@ namespace MiniLibrary.Classes
             this.Email = email;
             this.CustomerPassword = customerPassword;
             this.State = state;
+            this.Admin = admin;
         }
 
         public int Id { get; set; }
@@ -24,5 +25,6 @@ namespace MiniLibrary.Classes
         public string Email { get; set; }
         public string CustomerPassword { get; set; }
         public string State { get; set; }
+        public bool Admin { get; set; }
     }
 }
