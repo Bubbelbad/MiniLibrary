@@ -92,16 +92,24 @@ namespace MiniLibrary
             return customers;
         }
 
-        //funderar på hur jag ska få tag på Id från den inloggade från databasen. 
-        //Behöver detta för att se Current Loans...
-      //  public int GetCurrentCustomer()
-      //  {
-      //      MySqlConnection con = new MySqlConnection(connectionString);
-      //      con.Open();
-      //      string query = "SELECT id FROM customer" + 
-      //                     "WHERE"
-      //      return int;
-      //  }
+    
+        public Dictionary<int, BorrowPeriod> GetBorrowPeriods(int id)
+        {
+            Dictionary<int, BorrowPeriod> borrowPeriods = new Dictionary<int, BorrowPeriod>();
+            MySqlConnection con = new MySqlConnection(connectionString);
+            con.Open();
+            string query = "SELECT * FROM borrow_period " + 
+                           "WHERE customer_id = " + id + ";";
+            MySqlCommand command = new MySqlCommand(@query, con);
+            MySqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                BorrowPeriod bp = new BorrowPeriod((int)reader["id"], (DateTime)reader["start_time"], (DateTime)reader["end_time"], (bool)reader["is_returned"], (int)reader["book_id"], (int)reader["customer_id"]);
+                borrowPeriods.Add(bp.Id, bp);
+            }
+            con.Close();
+            return borrowPeriods;
+        }
 
         public Book AddNewBook(string bookTitle, string bookAuthor)
         {
@@ -200,21 +208,23 @@ namespace MiniLibrary
             return books;
         }
 
-        public void GetBorrowedBooks(int customerId)
-        {
-            //Måste jag lägga in denna VIEW's kolumner som en egen klass? 
-            //Hur kan jag visa VIEW customer_borrowed_books i en ListBox? 
-            MySqlConnection con = new MySqlConnection(connectionString);
-            con.Open();
-            string query = "SELECT * FROM customer_borrowed_books;";
-            MySqlCommand command = new MySqlCommand(query, con);
-            MySqlDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                //((int)reader["Customer"], (string)reader["Title"], (string)reader["Author"]);
-
-            }
-            reader.Close();
-        }
+      // public List<Book> GetBorrowedBooks(int customerId)
+      // {
+      //     List<Book>
+      //     //Måste jag lägga in denna VIEW's kolumner som en egen klass? 
+      //     //Hur kan jag visa VIEW customer_borrowed_books i en ListBox? 
+      //     MySqlConnection con = new MySqlConnection(connectionString);
+      //     con.Open();
+      //     string query = "SELECT * FROM customer_borrowed_books;";
+      //     MySqlCommand command = new MySqlCommand(query, con);
+      //     MySqlDataReader reader = command.ExecuteReader();
+      //     while (reader.Read())
+      //     {
+      //         //((int)reader["Customer"], (string)reader["Title"], (string)reader["Author"]);
+      //
+      //     }
+      //     reader.Close();
+      //     return 
+      // }
     }
 }

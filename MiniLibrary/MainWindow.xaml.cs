@@ -19,8 +19,8 @@ namespace MiniLibrary
 {
     public partial class MainWindow : Window
     {
-        // 1. Läs på om users och deras befogenheter. De ska få lämpliga rättigheter direkt i databasen.
-        // 2. Skapa canvas för inlogg
+        // 1. Läs på om users och deras befogenheter. De ska få lämpliga rättigheter direkt i databasen (Bara kolla igenon)
+        // 2. - Fixa try/catch där normal user inte kan genomföra funktion
 
 
         // Saker jag behöver lösa för att få G:
@@ -35,10 +35,14 @@ namespace MiniLibrary
         // Saker jag behöver lösa för att få VG:
         //
         // - Minst en VIEW
-        // - Användare med olika grants
         // - Indexering på en kolumn som används för att söka efter specifika rader
+        // - CHECK - Användare med olika grants
         // - CHECK - Databasen ska vara i minst 3NF
         // - CHECK - Minst en STORED PROCEDURE som ska användas i programmet
+
+        // Saker som vore roligt att fixa:
+
+        // - Säkerhet i systemet med transactions. Kanske kan jag göra transactions på ID med FK?
 
 
         DatabaseConnection databaseConnection = new DatabaseConnection();
@@ -48,9 +52,11 @@ namespace MiniLibrary
         List<Customer> customerList = new List<Customer>();
         Dictionary<int, Book> searchedBooks = new Dictionary<int, Book>();
         List<Book> searchedBookList = new List<Book>();
+        Dictionary<int, BorrowPeriod> borrowPeriods = new Dictionary<int, BorrowPeriod>();
         List<BorrowPeriod> borrowPeriodList = new List<BorrowPeriod>();
 
         int selectedId = 1;
+        Customer loggedInCustomer;
 
         public MainWindow()
         {
@@ -68,9 +74,6 @@ namespace MiniLibrary
             //Här hade jag tänkt att ta in resultatet från customer_borrowed_books. 
             //Men jag vill ju också som vanlig user barta kunna se mina, men som admin kunna se valfri users boklån. 
             // selectedId = databaseConnection.GetCurrentUser();
-            databaseConnection.GetBorrowedBooks(selectedId);
-            currentBooksLB.ItemsSource = borrowPeriodList;
-            currentBooksLB.Items.Refresh();
         }
 
 
@@ -117,6 +120,7 @@ namespace MiniLibrary
 
         private void currentLoansBtn_Click(object sender, RoutedEventArgs e)
         {
+            currentBooksLB.Items.Refresh();
             currentBooksCanvas.Visibility = Visibility.Visible;
             addCanvas.Visibility = Visibility.Hidden;
             editCanvas.Visibility = Visibility.Hidden;
@@ -282,20 +286,40 @@ namespace MiniLibrary
 
         private void loginBtn_Click(object sender, RoutedEventArgs e)
         {
-            Customer customer = null;
             string email = emailLoginTB.Text;
             string password = passwordLoginTB.Text;
             foreach (Customer cus in customerList)
             {
                 if (email == cus.Email)
                 {
-                    customer = cus;
-                    if (customer.Admin == true)
+                    loggedInCustomer = cus;
+                    borrowPeriods = databaseConnection.GetBorrowPeriods(loggedInCustomer.Id);
+                    borrowPeriodList = borrowPeriods.Values.ToList();
+                    currentBooksLB.ItemsSource = borrowPeriodList;
+                    currentBooksLB.Items.Refresh();
+                    if (loggedInCustomer.Admin == true)
                     {
                         databaseConnection = new DatabaseConnection(true);
                     }
+                    loginCanvas.Visibility = Visibility.Hidden;
+                    bookCanvas.Visibility = Visibility.Visible;
+                    ShowMenu();
+                    return;
                 }
             }
+            MessageBox.Show("Wrong credentials, try again.");
+        }
+
+        private void ShowMenu()
+        {
+            menuBooksBtn.Visibility = Visibility.Visible;
+            menuBorrowHistoryBtn.Visibility = Visibility.Visible;
+            menuCustomersBtn.Visibility = Visibility.Visible;
+            currentLoansBtn.Visibility = Visibility.Visible;
+            txtInput.Visibility = Visibility.Visible;
+            tbPlaceHolder.Visibility = Visibility.Visible;
+            btnClear.Visibility = Visibility.Visible;
+
         }
     }
 }

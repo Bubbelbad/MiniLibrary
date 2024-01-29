@@ -19,7 +19,8 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="6*" />
         </Grid.RowDefinitions>
-        <Button
+        <Label
+            VerticalAlignment="Center"
             Background="Transparent"
             Content="MiniLibrary"
             FontFamily="Copperplate Gothic Bold"
@@ -39,7 +40,8 @@
             FontSize="12"
             FontWeight="Light"
             KeyDown="txtInput_KeyDown"
-            TextChanged="txtInput_TextChanged" />
+            TextChanged="txtInput_TextChanged"
+            Visibility="Hidden" />
         <TextBlock
             x:Name="tbPlaceHolder"
             Grid.Column="1"
@@ -50,9 +52,9 @@
             FontSize="12"
             FontWeight="Light"
             Foreground="DarkGray"
-            Text="Search for books" />
+            Text="Search for books"
+            Visibility="Hidden" />
 
-        <!--  Graphic buttons for editing  -->
         <Button
             x:Name="btnClear"
             Grid.Column="1"
@@ -65,7 +67,11 @@
             Click="btnClear_Click"
             Content="X"
             Foreground="LightGray"
-            TabIndex="-1" />
+            TabIndex="-1"
+            Visibility="Hidden" />
+
+        <!--  Graphic buttons for editing  -->
+
 
         <Button
             x:Name="deleteBtn"
@@ -189,6 +195,7 @@
 
         <!--  Menu buttons  -->
         <Button
+            x:Name="menuBooksBtn"
             Grid.Row="1"
             Height="30"
             Margin="0,0,0,0"
@@ -196,8 +203,10 @@
             Background="Transparent"
             Click="Button_Click_1"
             Content="Books"
-            Foreground="White" />
+            Foreground="White"
+            Visibility="Hidden" />
         <Button
+            x:Name="menuCustomersBtn"
             Grid.Row="1"
             Height="30"
             Margin="0,30,0,0"
@@ -205,7 +214,8 @@
             Background="Transparent"
             Click="Button_Click"
             Content="Customers"
-            Foreground="White" />
+            Foreground="White"
+            Visibility="Hidden" />
         <Button
             x:Name="currentLoansBtn"
             Grid.Row="1"
@@ -215,15 +225,18 @@
             Background="Transparent"
             Click="currentLoansBtn_Click"
             Content="Current loans"
-            Foreground="White" />
+            Foreground="White"
+            Visibility="Hidden" />
         <Button
+            x:Name="menuBorrowHistoryBtn"
             Grid.Row="1"
             Height="30"
             Margin="0,90,0,0"
             VerticalAlignment="Top"
             Background="Transparent"
             Content="Borrow history"
-            Foreground="White" />
+            Foreground="White"
+            Visibility="Hidden" />
 
         <!--  Book Canvas  -->
         <Canvas
@@ -619,8 +632,7 @@
                 VerticalAlignment="Top"
                 Background="Transparent"
                 Content="Email: "
-                Foreground="White"
-                />
+                Foreground="White" />
             <Label
                 Grid.Row="1"
                 Grid.Column="1"
@@ -638,8 +650,8 @@
                 VerticalAlignment="Top"
                 Background="Transparent"
                 Content="Log in to MiniLibrary:"
-                Foreground="White" 
-                FontSize="16"/>
+                FontSize="16"
+                Foreground="White" />
             <TextBox
                 x:Name="emailLoginTB"
                 Width="220 "
@@ -652,15 +664,15 @@
                 Margin="120,105,0,0"
                 Background="Transparent"
                 Foreground="White" />
-            <Button x:Name="loginBtn" 
-                    Width="50"
-                    Height="20"
-                    Content="Log In"
-                    Margin="120,140,0,0"
-                    Foreground="White"
-                    Background="Transparent"
-                    Click="loginBtn_Click"
-                    />
+            <Button
+                x:Name="loginBtn"
+                Width="50"
+                Height="20"
+                Margin="120,140,0,0"
+                Background="Transparent"
+                Click="loginBtn_Click"
+                Content="Log In"
+                Foreground="White" />
 
         </Canvas>
     </Grid>
