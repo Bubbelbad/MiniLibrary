@@ -93,22 +93,22 @@ namespace MiniLibrary
         }
 
     
-        public Dictionary<int, BorrowPeriod> GetBorrowPeriods(int id)
+        public List<CustomerBorrowedBooks> GetCustomerBorrowedBooks(int id)
         {
-            Dictionary<int, BorrowPeriod> borrowPeriods = new Dictionary<int, BorrowPeriod>();
+            List<CustomerBorrowedBooks> customerBorrowedBooks = new List<CustomerBorrowedBooks>();
             MySqlConnection con = new MySqlConnection(connectionString);
             con.Open();
-            string query = "SELECT * FROM borrow_period " + 
-                           "WHERE customer_id = " + id + ";";
+            string query = "SELECT * FROM customer_borrowed_books " + 
+                           "WHERE id = " + id + ";";
             MySqlCommand command = new MySqlCommand(@query, con);
             MySqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                BorrowPeriod bp = new BorrowPeriod((int)reader["id"], (DateTime)reader["start_time"], (DateTime)reader["end_time"], (bool)reader["is_returned"], (int)reader["book_id"], (int)reader["customer_id"]);
-                borrowPeriods.Add(bp.Id, bp);
+                CustomerBorrowedBooks cbb = new CustomerBorrowedBooks((int)reader["id"], (string)reader["Book"], (DateTime)reader["Start_Time"], (DateTime)reader["Deadline"], (bool)reader["Returned"]);
+                customerBorrowedBooks.Add(cbb);
             }
             con.Close();
-            return borrowPeriods;
+            return customerBorrowedBooks;
         }
 
         public Book AddNewBook(string bookTitle, string bookAuthor)

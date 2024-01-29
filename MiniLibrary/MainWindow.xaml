@@ -551,21 +551,12 @@
             Grid.Row="1"
             Grid.Column="1"
             Visibility="Hidden">
+            
             <Label
                 Grid.Row="1"
                 Grid.Column="1"
-                Width="20"
+                Width="40"
                 Margin="0,0,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Background="Transparent"
-                Content="Id"
-                Foreground="White" />
-            <Label
-                Grid.Row="1"
-                Grid.Column="1"
-                Width="50"
-                Margin="50,0,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 Background="Transparent"
@@ -574,7 +565,15 @@
             <Label
                 Grid.Row="1"
                 Grid.Column="1"
-                Margin="350,0,0,0"
+                Margin="285,0,0,0"
+                VerticalAlignment="Top"
+                Background="Transparent"
+                Content="Date borrowed"
+                Foreground="White" />
+            <Label
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="440,0,0,0"
                 VerticalAlignment="Top"
                 Background="Transparent"
                 Content="Deadline"
@@ -595,22 +594,28 @@
                         <DataTemplate>
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="50" />
-                                    <ColumnDefinition Width="300" />
-                                    <ColumnDefinition Width="200" />
+                                    <ColumnDefinition Width="280" />
+                                    <ColumnDefinition Width="130" />
+                                    <ColumnDefinition Width="130" />
+                                    <ColumnDefinition Width="10" />
                                 </Grid.ColumnDefinitions>
+                               
                                 <TextBlock
                                     Grid.Column="0"
                                     Foreground="White"
-                                    Text="{Binding Path=Id}" />
+                                    Text="{Binding Path=Book}" />
                                 <TextBlock
                                     Grid.Column="1"
                                     Foreground="White"
-                                    Text="{Binding Path=Title}" />
+                                    Text="{Binding Path=Start_Time}" />
                                 <TextBlock
                                     Grid.Column="2"
-                                    Foreground="White"
+                                    Foreground="OrangeRed"
                                     Text="{Binding Path=Deadline}" />
+                                <TextBlock
+                                    Grid.Column="3"
+                                    Foreground="White"
+                                    Text="{Binding Path=Returned}" />
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>

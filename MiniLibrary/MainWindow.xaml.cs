@@ -53,7 +53,7 @@ namespace MiniLibrary
         Dictionary<int, Book> searchedBooks = new Dictionary<int, Book>();
         List<Book> searchedBookList = new List<Book>();
         Dictionary<int, BorrowPeriod> borrowPeriods = new Dictionary<int, BorrowPeriod>();
-        List<BorrowPeriod> borrowPeriodList = new List<BorrowPeriod>();
+        List<CustomerBorrowedBooks> customerBorrowedBooksList = new List<CustomerBorrowedBooks>();
 
         int selectedId = 1;
         Customer loggedInCustomer;
@@ -280,8 +280,11 @@ namespace MiniLibrary
         {
             Book book = bookList[bookListBox.SelectedIndex];
             int bookKey = book.Id;
-            int customerKey = selectedId;
+            int customerKey = loggedInCustomer.Id;
             databaseConnection.AssignBookToCustomer(bookKey, customerKey);
+            CustomerBorrowedBooks cbd = new CustomerBorrowedBooks(customerKey, book.Title, DateTime.Now, DateTime.Now, false);
+            customerBorrowedBooksList.Add(cbd);
+            currentBooksLB.Items.Refresh();
         }
 
         private void loginBtn_Click(object sender, RoutedEventArgs e)
@@ -293,9 +296,8 @@ namespace MiniLibrary
                 if (email == cus.Email)
                 {
                     loggedInCustomer = cus;
-                    borrowPeriods = databaseConnection.GetBorrowPeriods(loggedInCustomer.Id);
-                    borrowPeriodList = borrowPeriods.Values.ToList();
-                    currentBooksLB.ItemsSource = borrowPeriodList;
+                    customerBorrowedBooksList = databaseConnection.GetCustomerBorrowedBooks(loggedInCustomer.Id);
+                    currentBooksLB.ItemsSource = customerBorrowedBooksList;
                     currentBooksLB.Items.Refresh();
                     if (loggedInCustomer.Admin == true)
                     {
@@ -319,7 +321,6 @@ namespace MiniLibrary
             txtInput.Visibility = Visibility.Visible;
             tbPlaceHolder.Visibility = Visibility.Visible;
             btnClear.Visibility = Visibility.Visible;
-
         }
     }
 }
