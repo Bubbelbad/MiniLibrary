@@ -107,7 +107,7 @@ namespace MiniLibrary
 
         public Book AddNewBook(string bookTitle, string bookAuthor, bool bookAvailable)
         {
-            MySqlConnection connection = new MySqlConnection (connectionString);
+            MySqlConnection connection = new MySqlConnection(connectionString);
             connection.Open();
             string query = "CALL create_new_book(\"" + bookTitle + "\", \"" + bookAuthor + "\", \"" + bookAvailable + "\")";
             MySqlCommand command = new MySqlCommand(query, connection);
@@ -201,24 +201,5 @@ namespace MiniLibrary
             connection.Close();
             return books;
         }
-
-      // public List<Book> GetBorrowedBooks(int customerId)
-      // {
-      //     List<Book>
-      //     //Måste jag lägga in denna VIEW's kolumner som en egen klass? 
-      //     //Hur kan jag visa VIEW customer_borrowed_books i en ListBox? 
-      //     MySqlConnection con = new MySqlConnection(connectionString);
-      //     con.Open();
-      //     string query = "SELECT * FROM customer_borrowed_books;";
-      //     MySqlCommand command = new MySqlCommand(query, con);
-      //     MySqlDataReader reader = command.ExecuteReader();
-      //     while (reader.Read())
-      //     {
-      //         //((int)reader["Customer"], (string)reader["Title"], (string)reader["Author"]);
-      //
-      //     }
-      //     reader.Close();
-      //     return 
-      // }
     }
 }

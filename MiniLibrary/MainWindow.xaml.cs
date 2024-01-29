@@ -19,7 +19,7 @@ namespace MiniLibrary
 {
     public partial class MainWindow : Window
     {
-        // 1.. - Fixa try/catch där normal user inte kan genomföra funktion
+        // 1. - Fixa try/catch där normal user inte kan genomföra funktion
         // 2. - Se till att man kan lämna tillbaka bäcker man lånat
         // 3. - Se till att databasen sparar lånad bok som icke-available 
 
@@ -164,24 +164,31 @@ namespace MiniLibrary
         {
             if (bookCanvas.Visibility == Visibility.Visible)
             {
-                int bookIndexToDelete = bookListBox.SelectedIndex;
-                if (bookIndexToDelete != -1)
+                try
                 {
-                    Book book = bookList[bookIndexToDelete];
-                    bookListBox.SelectedIndex = -1;
-                    bool success = databaseConnection.DeleteBook(book.Id);
-                    if(success)
+                    int bookIndexToDelete = bookListBox.SelectedIndex;
+                    if (bookIndexToDelete != -1)
                     {
-                        txtInput.Text = "";
-                        bookList.Remove(book);
-                        books.Remove(book.Id);
-                        searchedBookList.Remove(book);
-                        searchedBooks.Remove(book.Id);
-                        books = databaseConnection.GetBooks();
-                        bookList = books.Values.ToList();
-                        bookListBox.ItemsSource = books.Values;
-                        bookListBox.Items.Refresh();
+                        Book book = bookList[bookIndexToDelete];
+                        bookListBox.SelectedIndex = -1;
+                        bool success = databaseConnection.DeleteBook(book.Id);
+                        if (success)
+                        {
+                            txtInput.Text = "";
+                            bookList.Remove(book);
+                            books.Remove(book.Id);
+                            searchedBookList.Remove(book);
+                            searchedBooks.Remove(book.Id);
+                            books = databaseConnection.GetBooks();
+                            bookList = books.Values.ToList();
+                            bookListBox.ItemsSource = books.Values;
+                            bookListBox.Items.Refresh();
+                        }
                     }
+                }
+                catch
+                {
+                    MessageBox.Show("You don't have permission to delete books from the database");
                 }
             } 
             else if (customerCanvas.Visibility == Visibility.Visible)
@@ -312,6 +319,7 @@ namespace MiniLibrary
                     if (loggedInCustomer.Admin == true)
                     {
                         databaseConnection = new DatabaseConnection(true);
+                        AdminButtonReveal();
                     }
                     loginCanvas.Visibility = Visibility.Hidden;
                     bookCanvas.Visibility = Visibility.Visible;
@@ -332,6 +340,20 @@ namespace MiniLibrary
             txtInput.Visibility = Visibility.Visible;
             tbPlaceHolder.Visibility = Visibility.Visible;
             btnClear.Visibility = Visibility.Visible;
+            borrowBtn.Visibility = Visibility.Visible;
+            borrowIcon.Visibility = Visibility.Visible;
+            saveBtn.Visibility = Visibility.Visible;
+            saveIcon.Visibility = Visibility.Visible;
+        }
+
+        private void AdminButtonReveal()
+        {
+            deleteBtn.Visibility = Visibility.Visible;
+            editBtn.Visibility = Visibility.Visible;
+            addBtn.Visibility = Visibility.Visible;
+            deleteIcon.Visibility = Visibility.Visible;
+            editIcon.Visibility = Visibility.Visible;
+            addIcon.Visibility = Visibility.Visible;
         }
     }
 }
