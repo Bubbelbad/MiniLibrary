@@ -73,6 +73,7 @@
         <!--  Graphic buttons for editing  -->
         <Button
             x:Name="deleteBtn"
+            ToolTip="Delete book"
             Grid.Row="0"
             Grid.Column="1"
             Width="25"
@@ -94,10 +95,13 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom"
             Panel.ZIndex="-1"
+            Fill="White"
+            Stretch="Fill"
             Data="M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z"
             Visibility="Hidden" />
         <Button
             x:Name="returnBtn"
+            ToolTip="Return book"
             Grid.Row="0"
             Grid.Column="1"
             Width="25"
@@ -127,6 +131,7 @@
             Visibility="Hidden" />
         <Button
             x:Name="saveBtn"
+            ToolTip="Save book"
             Grid.Row="0"
             Grid.Column="1"
             Width="25"
@@ -153,6 +158,7 @@
             Visibility="Hidden" />
         <Button
             x:Name="editBtn"
+            ToolTip="Edit book"
             Grid.Row="0"
             Grid.Column="1"
             Width="25"
@@ -180,6 +186,7 @@
             Visibility="Hidden" />
         <Button
             x:Name="addBtn"
+            ToolTip="Add new book"
             Grid.Row="0"
             Grid.Column="1"
             Width="25"
@@ -207,6 +214,7 @@
             Visibility="Hidden" />
         <Button
             x:Name="borrowBtn"
+            ToolTip="Borrow book"
             Grid.Row="0"
             Grid.Column="1"
             Width="25"
@@ -705,7 +713,7 @@
                 Margin="120,83,0,0"
                 Background="Transparent"
                 Foreground="White" />
-            <TextBox
+            <PasswordBox
                 x:Name="passwordLoginTB"
                 Width="220 "
                 Margin="120,105,0,0"

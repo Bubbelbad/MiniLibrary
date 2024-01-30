@@ -19,9 +19,15 @@ namespace MiniLibrary
 {
     public partial class MainWindow : Window
     {
-        // 2. - Se till att man kan lämna tillbaka bäcker man lånat
-        // 3. - Se till att databasen sparar lånad bok som icke-available --- Check ? 
-
+        // SAKER ATT GÖRA:
+        //
+        // - 1. - Se till att indexeringen är klar och att det räcker
+        // - 2. - Leta reda på deleteBtn + icon så de syns i programmet igen
+        // - 3. - Se till att en borrow_period skapas och läggs till i historiken när man lämnar tillbaka bok
+        // - 4. - Fixa funktion för att ta bort och redigera customers
+        // - 5. - Fixa en thread som sover till Deadline är nära och skickar en notis till customer
+        // - 6. - Skapa en förklaring till varför jag har skapat så som jag har gjort. 
+        // - 7. - Kolla över 3NF så att det räcker till
 
         // Saker jag behöver lösa för att få G:
         //
@@ -32,16 +38,12 @@ namespace MiniLibrary
         // - CHECK - Ta bort data från databasen
 
         // Saker jag behöver lösa för att få VG:
-        // - Indexering på en kolumn som används för att söka efter specifika rader
         //
+        // - CHECK - Indexering på en kolumn som används för att söka efter specifika rader
         // - CHECK - Minst en VIEW
         // - CHECK - Användare med olika grants
         // - CHECK - Databasen ska vara i minst 3NF
         // - CHECK - Minst en STORED PROCEDURE som ska användas i programmet
-
-        // Saker som vore roligt att fixa:
-
-        // - Säkerhet i systemet med transactions. Kanske kan jag göra transactions på ID med FK?
 
 
         DatabaseConnection databaseConnection = new DatabaseConnection();
@@ -69,6 +71,7 @@ namespace MiniLibrary
             customerList = customers.Values.ToList();
             customerListBox.ItemsSource = customers.Values;
             customerListBox.Items.Refresh();
+            MessageBox.Show("For admin login: \n- admin@admin.com\n- admin")
         }
 
 
@@ -134,7 +137,6 @@ namespace MiniLibrary
             editCanvas.Visibility = Visibility.Hidden;
             customerCanvas.Visibility = Visibility.Hidden;
             bookCanvas.Visibility = Visibility.Hidden;
-            
         }
 
         //Söka efter böcker:
@@ -322,8 +324,8 @@ namespace MiniLibrary
         //Button to return a book that user has borrowed.
         private void returnBtn_Click(object sender, RoutedEventArgs e)
         {
-          //  try
-          //  {
+            try
+            {
                 CustomerBorrowedBooks cbb = customerBorrowedBooksList[currentBooksLB.SelectedIndex];
                 string cbbBookTitle = cbb.Book;
                 int customerKey = loggedInCustomer.Id;
@@ -335,25 +337,23 @@ namespace MiniLibrary
                         customerBorrowedBooksList.Remove(cbb);
                         book.Available = true;
                         currentBooksLB.Items.Refresh();
-                        bookListBox.SelectedIndex = -1;
+                        currentBooksLB.SelectedIndex = -1;
                         databaseConnection.CustomerReturnsBook(bookKey, customerKey);
                         return;
                     }
                 }
-                MessageBox.Show("We came this far");
-             //   }
-          //  }
-          //  catch
-          //  {
-          //      MessageBox.Show("You have to select a book");
-          //  }
+            }
+            catch
+            {
+                MessageBox.Show("You have to select a book");
+            }
         }
 
         //Button for inlog
         private void loginBtn_Click(object sender, RoutedEventArgs e)
         {
             string email = emailLoginTB.Text;
-            string password = passwordLoginTB.Text;
+            string password = passwordLoginTB.Password;
             foreach (Customer cus in customerList)
             {
                 if (email == cus.Email)
