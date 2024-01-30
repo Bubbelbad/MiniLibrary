@@ -19,9 +19,8 @@ namespace MiniLibrary
 {
     public partial class MainWindow : Window
     {
-        // 1. - Fixa try/catch där normal user inte kan genomföra funktion
         // 2. - Se till att man kan lämna tillbaka bäcker man lånat
-        // 3. - Se till att databasen sparar lånad bok som icke-available 
+        // 3. - Se till att databasen sparar lånad bok som icke-available --- Check ? 
 
 
         // Saker jag behöver lösa för att få G:
@@ -33,9 +32,9 @@ namespace MiniLibrary
         // - CHECK - Ta bort data från databasen
 
         // Saker jag behöver lösa för att få VG:
+        // - Indexering på en kolumn som används för att söka efter specifika rader
         //
         // - CHECK - Minst en VIEW
-        // - Indexering på en kolumn som används för att söka efter specifika rader
         // - CHECK - Användare med olika grants
         // - CHECK - Databasen ska vara i minst 3NF
         // - CHECK - Minst en STORED PROCEDURE som ska användas i programmet
@@ -102,6 +101,10 @@ namespace MiniLibrary
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             bookCanvas.Visibility = Visibility.Visible;
+            borrowBtn.Visibility = Visibility.Visible;
+            borrowIcon.Visibility = Visibility.Visible;
+            returnBtn.Visibility = Visibility.Hidden;
+            returnIcon.Visibility = Visibility.Hidden;
             customerCanvas.Visibility = Visibility.Hidden;
             addCanvas.Visibility = Visibility.Hidden;
             editCanvas.Visibility = Visibility.Hidden;
@@ -123,10 +126,15 @@ namespace MiniLibrary
         {
             currentBooksLB.Items.Refresh();
             currentBooksCanvas.Visibility = Visibility.Visible;
+            returnBtn.Visibility = Visibility.Visible;
+            returnIcon.Visibility = Visibility.Visible;
+            borrowBtn.Visibility = Visibility.Hidden;
+            borrowIcon.Visibility = Visibility.Hidden;
             addCanvas.Visibility = Visibility.Hidden;
             editCanvas.Visibility = Visibility.Hidden;
             customerCanvas.Visibility = Visibility.Hidden;
             bookCanvas.Visibility = Visibility.Hidden;
+            
         }
 
         //Söka efter böcker:
@@ -286,21 +294,59 @@ namespace MiniLibrary
         //A borrow period of a month is created in AssignBookToCustomer();
         private void borrowBtn_Click(object sender, RoutedEventArgs e)
         {
-            Book book = bookList[bookListBox.SelectedIndex];
-            int bookKey = book.Id;
-            int customerKey = loggedInCustomer.Id;
-            if (book.Available == true)
+            try
             {
-                databaseConnection.AssignBookToCustomer(bookKey, customerKey); //HERE I ALSO NEED TO CHANGE THE AVAILABILITY IN THE DATABASE !!
-                CustomerBorrowedBooks cbd = new CustomerBorrowedBooks(customerKey, book.Title, DateTime.Now, DateTime.Now, false);
-                book.Available = false;
-                customerBorrowedBooksList.Add(cbd);
-                currentBooksLB.Items.Refresh();
+                Book book = bookList[bookListBox.SelectedIndex];
+                int bookKey = book.Id;
+                int customerKey = loggedInCustomer.Id;
+                if (book.Available == true)
+                {
+                    databaseConnection.AssignBookToCustomer(bookKey, customerKey); //HERE I ALSO NEED TO CHANGE THE AVAILABILITY IN THE DATABASE !!
+                    CustomerBorrowedBooks cbd = new CustomerBorrowedBooks(customerKey, book.Title, DateTime.Now, DateTime.Now.AddMonths(+1), false);
+                    book.Available = false;
+                    customerBorrowedBooksList.Add(cbd);
+                    currentBooksLB.Items.Refresh();
+                    bookListBox.SelectedIndex = -1;
+                }
+                else
+                {
+                    MessageBox.Show("This book is already borrowed");
+                }
             }
-            else
+            catch
             {
-                MessageBox.Show("This book is already borrowed");
+                MessageBox.Show("You have to select a book");
             }
+        }
+
+        //Button to return a book that user has borrowed.
+        private void returnBtn_Click(object sender, RoutedEventArgs e)
+        {
+          //  try
+          //  {
+                CustomerBorrowedBooks cbb = customerBorrowedBooksList[currentBooksLB.SelectedIndex];
+                string cbbBookTitle = cbb.Book;
+                int customerKey = loggedInCustomer.Id;
+                foreach (Book book in bookList)
+                {
+                    if (book.Title == cbbBookTitle)
+                    {
+                        int bookKey = book.Id;
+                        customerBorrowedBooksList.Remove(cbb);
+                        book.Available = true;
+                        currentBooksLB.Items.Refresh();
+                        bookListBox.SelectedIndex = -1;
+                        databaseConnection.CustomerReturnsBook(bookKey, customerKey);
+                        return;
+                    }
+                }
+                MessageBox.Show("We came this far");
+             //   }
+          //  }
+          //  catch
+          //  {
+          //      MessageBox.Show("You have to select a book");
+          //  }
         }
 
         //Button for inlog

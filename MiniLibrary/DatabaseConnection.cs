@@ -105,6 +105,18 @@ namespace MiniLibrary
             return customerBorrowedBooks;
         }
 
+        public void CustomerReturnsBook(int bookId, int customerId)
+        {
+            MySqlConnection con = new MySqlConnection(connectionString);
+            con.Open();
+            string query = "CALL customer_returns_book(@bookId, @customerId);";
+            MySqlCommand command = new MySqlCommand(query, con);
+            command.Parameters.AddWithValue("@bookId", bookId);
+            command.Parameters.AddWithValue("@customerId", customerId);
+            command.ExecuteNonQuery();
+            con.Close();
+        }
+
         public Book AddNewBook(string bookTitle, string bookAuthor, bool bookAvailable)
         {
             MySqlConnection connection = new MySqlConnection(connectionString);
@@ -171,9 +183,7 @@ namespace MiniLibrary
         public void AssignBookToCustomer(int bookKey, int customerKey)
         {
             MySqlConnection connection = new MySqlConnection(connectionString);
-            connection.Open();
-
-            // Adding a new connection is as easy as adding the two keys together to the link table.    
+            connection.Open();  
             string query = "CALL customer_borrows_book (" + bookKey + ", " + customerKey + ")";
             MySqlCommand command = new MySqlCommand(query, connection);
             int rowsAffected = command.ExecuteNonQuery();
