@@ -86,7 +86,25 @@ namespace MiniLibrary
             return customers;
         }
 
-    
+        //Importing all the past borrow periods
+        public List<BorrowPeriod> GetBorrowPeriods(int customerId)
+        {
+            List<BorrowPeriod> borrowPeriodList = new List<BorrowPeriod>();
+            MySqlConnection con = new MySqlConnection(connectionString);
+            con.Open();
+            string query = "SELECT * FROM borrow_period " +
+                           "WHERE customer_id = " + customerId + " && " + "is_returned = true;";
+            MySqlCommand command = new MySqlCommand(@query, con);
+            MySqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                BorrowPeriod bp = new BorrowPeriod((int)reader["id"], (DateTime)reader["start_time"], (DateTime)reader["end_time"], (bool)reader["is_returned"], (int)reader["book_id"], (int)reader["customer_id"]);
+                borrowPeriodList.Add(bp);
+            }
+            con.Close();
+            return borrowPeriodList;
+        }
+
         public List<CustomerBorrowedBooks> GetCustomerBorrowedBooks(int id)
         {
             List<CustomerBorrowedBooks> customerBorrowedBooks = new List<CustomerBorrowedBooks>();
@@ -131,11 +149,11 @@ namespace MiniLibrary
             return book;
         }
 
-        public int EditBook(int bookId, string bookTitle, string bookAuthor, bool available)
+        public int EditBook(int bookId, string bookTitle, string bookAuthor)
         {
             MySqlConnection connection = new MySqlConnection(connectionString);
             connection.Open();
-            string query = "CALL edit_book(" + bookId + ", \"" + bookTitle + "\", \"" + bookAuthor + "\", \"" + available + "\")";
+            string query = "CALL edit_book(" + bookId + ", \"" + bookTitle + "\", \"" + bookAuthor + "\")";
             MySqlCommand command = new MySqlCommand(query, connection);
             int rowsAffected = command.ExecuteNonQuery();
             connection.Close();

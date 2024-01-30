@@ -22,12 +22,11 @@ namespace MiniLibrary
         // SAKER ATT GÖRA:
         //
         // - 1. - Se till att indexeringen är klar och att det räcker
-        // - 2. - Leta reda på deleteBtn + icon så de syns i programmet igen
-        // - 3. - Se till att en borrow_period skapas och läggs till i historiken när man lämnar tillbaka bok
-        // - 4. - Fixa funktion för att ta bort och redigera customers
-        // - 5. - Fixa en thread som sover till Deadline är nära och skickar en notis till customer
-        // - 6. - Skapa en förklaring till varför jag har skapat så som jag har gjort. 
-        // - 7. - Kolla över 3NF så att det räcker till
+        // - 2. - Se till att en borrow_period skapas och läggs till i historiken när man lämnar tillbaka bok
+        // - 3. - Fixa funktion för att ta bort och redigera customers
+        // - 4. - Fixa en thread som sover till Deadline är nära och skickar en notis till customer
+        // - 5. - Skapa en förklaring till varför jag har skapat databasen så som jag har gjort. 
+        // - 6. - Kolla över 3NF så att det räcker till: Fungerar min bool i borrowPeriod? Jag tycker själv att den är individuell, men men...
 
         // Saker jag behöver lösa för att få G:
         //
@@ -53,7 +52,7 @@ namespace MiniLibrary
         List<Customer> customerList = new List<Customer>();
         Dictionary<int, Book> searchedBooks = new Dictionary<int, Book>();
         List<Book> searchedBookList = new List<Book>();
-        Dictionary<int, BorrowPeriod> borrowPeriods = new Dictionary<int, BorrowPeriod>();
+        List<BorrowPeriod> borrowPeriodList = new List<BorrowPeriod>();
         List<CustomerBorrowedBooks> customerBorrowedBooksList = new List<CustomerBorrowedBooks>();
 
         int selectedId = 1;
@@ -71,7 +70,7 @@ namespace MiniLibrary
             customerList = customers.Values.ToList();
             customerListBox.ItemsSource = customers.Values;
             customerListBox.Items.Refresh();
-            MessageBox.Show("For admin login: \n- admin@admin.com\n- admin")
+            MessageBox.Show("For admin login: \nadmin\nadmin\n\nFor regular user login:\nuser\nuser");
         }
 
 
@@ -106,6 +105,7 @@ namespace MiniLibrary
             bookCanvas.Visibility = Visibility.Visible;
             borrowBtn.Visibility = Visibility.Visible;
             borrowIcon.Visibility = Visibility.Visible;
+            borrowPeriodCanvas.Visibility = Visibility.Hidden;
             returnBtn.Visibility = Visibility.Hidden;
             returnIcon.Visibility = Visibility.Hidden;
             customerCanvas.Visibility = Visibility.Hidden;
@@ -121,6 +121,7 @@ namespace MiniLibrary
             bookCanvas.Visibility = Visibility.Hidden;
             addCanvas.Visibility = Visibility.Hidden;
             editCanvas.Visibility = Visibility.Hidden;
+            borrowPeriodCanvas.Visibility = Visibility.Hidden;
             currentBooksCanvas.Visibility = Visibility.Hidden;
         }
 
@@ -131,6 +132,22 @@ namespace MiniLibrary
             currentBooksCanvas.Visibility = Visibility.Visible;
             returnBtn.Visibility = Visibility.Visible;
             returnIcon.Visibility = Visibility.Visible;
+            borrowBtn.Visibility = Visibility.Hidden;
+            borrowPeriodCanvas.Visibility = Visibility.Hidden;
+            borrowIcon.Visibility = Visibility.Hidden;
+            addCanvas.Visibility = Visibility.Hidden;
+            editCanvas.Visibility = Visibility.Hidden;
+            customerCanvas.Visibility = Visibility.Hidden;
+            bookCanvas.Visibility = Visibility.Hidden;
+        }
+
+        private void menuBorrowHistoryBtn_Click(object sender, RoutedEventArgs e)
+        {
+            borrowPeriodsLB.Items.Refresh();
+            borrowPeriodCanvas.Visibility = Visibility.Visible;
+            currentBooksCanvas.Visibility = Visibility.Hidden;
+            returnBtn.Visibility = Visibility.Hidden;
+            returnIcon.Visibility = Visibility.Hidden;
             borrowBtn.Visibility = Visibility.Hidden;
             borrowIcon.Visibility = Visibility.Hidden;
             addCanvas.Visibility = Visibility.Hidden;
@@ -192,7 +209,6 @@ namespace MiniLibrary
                             books = databaseConnection.GetBooks();
                             bookList = books.Values.ToList();
                             bookListBox.ItemsSource = books.Values;
-                            bookListBox.Items.Refresh();
                         }
                     }
                 }
@@ -246,7 +262,7 @@ namespace MiniLibrary
 
             else if (customerCanvas.Visibility == Visibility.Visible)
             {
-
+                //Yet to be implemented...
             }
         }
 
@@ -282,12 +298,10 @@ namespace MiniLibrary
         {
             string title = titleEditTB.Text;
             string author = authorEditTB.Text;
-            bool available = bookList[selectedId].Available;
-            int row = databaseConnection.EditBook(selectedId, title, author, available);
+            int row = databaseConnection.EditBook(selectedId, title, author);
             books = databaseConnection.GetBooks();
             bookList = books.Values.ToList();
             bookListBox.ItemsSource = books.Values;
-            bookListBox.Items.Refresh();
             titleEditTB.Text = "";
             authorEditTB.Text = "";
         }
@@ -339,6 +353,9 @@ namespace MiniLibrary
                         currentBooksLB.Items.Refresh();
                         currentBooksLB.SelectedIndex = -1;
                         databaseConnection.CustomerReturnsBook(bookKey, customerKey);
+                        borrowPeriodList = databaseConnection.GetBorrowPeriods(customerKey);
+                        borrowPeriodsLB.ItemsSource = borrowPeriodList;
+                        borrowPeriodsLB.Items.Refresh();
                         return;
                     }
                 }
@@ -349,7 +366,7 @@ namespace MiniLibrary
             }
         }
 
-        //Button for inlog
+        //Button for login
         private void loginBtn_Click(object sender, RoutedEventArgs e)
         {
             string email = emailLoginTB.Text;
@@ -362,6 +379,10 @@ namespace MiniLibrary
                     customerBorrowedBooksList = databaseConnection.GetCustomerBorrowedBooks(loggedInCustomer.Id);
                     currentBooksLB.ItemsSource = customerBorrowedBooksList;
                     currentBooksLB.Items.Refresh();
+                    borrowPeriodList = databaseConnection.GetBorrowPeriods(loggedInCustomer.Id);
+                    borrowPeriodsLB.ItemsSource = borrowPeriodList;
+                    borrowPeriodsLB.Items.Refresh();
+
                     if (loggedInCustomer.Admin == true)
                     {
                         databaseConnection = new DatabaseConnection(true);
@@ -376,7 +397,7 @@ namespace MiniLibrary
             MessageBox.Show("Wrong credentials, try again.");
         }
 
-        //Function to show the menus after logging in
+        //Function to show the menus after login
         private void ShowMenu()
         {
             menuBooksBtn.Visibility = Visibility.Visible;
@@ -392,6 +413,7 @@ namespace MiniLibrary
             saveIcon.Visibility = Visibility.Visible;
         }
 
+        //Function to show the admin-buttons after login
         private void AdminButtonReveal()
         {
             deleteBtn.Visibility = Visibility.Visible;
