@@ -41,7 +41,6 @@ namespace MiniLibrary
             }
         }
 
-
         public Dictionary<int, Book> GetBooks()
         {
             Dictionary<int, Book> books = new Dictionary<int, Book>();
@@ -72,16 +71,18 @@ namespace MiniLibrary
             string query = "SELECT * FROM customer;";
             MySqlCommand command = new MySqlCommand(query, connection);
             MySqlDataReader reader = command.ExecuteReader();
-            while (reader.Read())
-            {
-                Customer customer = new Customer((int)reader["id"], (string)reader["first_name"], (string)reader["last_name"], (string)reader["email"], (string)reader["customer_password"], (string)reader["state"], (bool)reader["admin"]);
-                customers.Add(customer.Id, customer);
-            }
             try
+            {
+                while (reader.Read())
+                {
+                    Customer customer = new Customer((int)reader["id"], (string)reader["first_name"], (string)reader["last_name"], (string)reader["email"], (string)reader["customer_password"], (string)reader["state"], (bool)reader["admin"]);
+                    customers.Add(customer.Id, customer);
+                }
+            }
+            catch (Exception ex) 
             {
                 MessageBox.Show("Something went wrong");
             }
-            catch (Exception ex) { }
             connection.Close();
             return customers;
         }
@@ -133,14 +134,15 @@ namespace MiniLibrary
             connection.Close();
         }
 
-        public void CustomerReturnsBook(int bookId, int customerId)
+        public void CustomerReturnsBook(int bookId, int customerId, int bookPeriodKey)
         {
             MySqlConnection con = new MySqlConnection(connectionString);
             con.Open();
-            string query = "CALL customer_returns_book(@bookId, @customerId);";
+            string query = "CALL customer_returns_book(@bookId, @customerId, @bookPeriodKey);";
             MySqlCommand command = new MySqlCommand(query, con);
             command.Parameters.AddWithValue("@bookId", bookId);
             command.Parameters.AddWithValue("@customerId", customerId);
+            command.Parameters.AddWithValue("@bookPeriodKey", bookPeriodKey);
             command.ExecuteNonQuery();
             con.Close();
         }

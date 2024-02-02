@@ -331,18 +331,19 @@ namespace MiniLibrary
             }
             catch
             {
-                MessageBox.Show("You have to select a book");
+                
             }
         }
 
         //Button to return a book that user has borrowed.
         private void returnBtn_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
+           // try
+           // {
                 CustomerBorrowedBooks cbb = customerBorrowedBooksList[currentBooksLB.SelectedIndex];
                 string cbbBookTitle = cbb.Book;
                 int customerKey = loggedInCustomer.Id;
+                 int borrowPeriodId = cbb.Id;
                 foreach (Book book in bookList)
                 {
                     if (book.Title == cbbBookTitle)
@@ -352,18 +353,18 @@ namespace MiniLibrary
                         book.Available = true;
                         currentBooksLB.Items.Refresh();
                         currentBooksLB.SelectedIndex = -1;
-                        databaseConnection.CustomerReturnsBook(bookKey, customerKey);
+                        databaseConnection.CustomerReturnsBook(bookKey, customerKey, borrowPeriodId);
                         borrowPeriodList = databaseConnection.GetBorrowPeriods(customerKey);
                         borrowPeriodsLB.ItemsSource = borrowPeriodList;
                         borrowPeriodsLB.Items.Refresh();
                         return;
                     }
                 }
-            }
-            catch
-            {
-                MessageBox.Show("You have to select a book");
-            }
+           //}
+           //catch
+           //{
+           //    MessageBox.Show("You have to select a book");
+           //}
         }
 
         //Button for login
@@ -402,7 +403,6 @@ namespace MiniLibrary
         {
             menuBooksBtn.Visibility = Visibility.Visible;
             menuBorrowHistoryBtn.Visibility = Visibility.Visible;
-            menuCustomersBtn.Visibility = Visibility.Visible;
             currentLoansBtn.Visibility = Visibility.Visible;
             txtInput.Visibility = Visibility.Visible;
             tbPlaceHolder.Visibility = Visibility.Visible;
@@ -420,6 +420,7 @@ namespace MiniLibrary
             deleteIcon.Visibility = Visibility.Visible;
             editIcon.Visibility = Visibility.Visible;
             addIcon.Visibility = Visibility.Visible;
+            menuCustomersBtn.Visibility = Visibility.Visible;
         }
     }
 }
