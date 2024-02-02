@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:MiniLibrary"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="MiniLibrary"
-    Width="805"
+    Width="820"
     Height="460"
     Background="Black"
     mc:Ignorable="d">
@@ -560,8 +560,8 @@
                 Click="editBookBtn_Click"
                 Content="Save book"
                 Foreground="White" />
-
         </Canvas>
+        
         <!--  Current Books  -->
         <Canvas
             x:Name="currentBooksCanvas"
@@ -589,7 +589,7 @@
             <Label
                 Grid.Row="1"
                 Grid.Column="1"
-                Margin="440,0,0,0"
+                Margin="413,0,0,0"
                 VerticalAlignment="Top"
                 Background="Transparent"
                 Content="Deadline"
@@ -628,10 +628,6 @@
                                     Grid.Column="2"
                                     Foreground="OrangeRed"
                                     Text="{Binding Path=Deadline}" />
-                                <TextBlock
-                                    Grid.Column="3"
-                                    Foreground="White"
-                                    Text="{Binding Path=Returned}" />
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
@@ -666,7 +662,7 @@
             <Label
                 Grid.Row="1"
                 Grid.Column="1"
-                Margin="440,0,0,0"
+                Margin="413,0,0,0"
                 VerticalAlignment="Top"
                 Background="Transparent"
                 Content="Returned on"
@@ -704,10 +700,6 @@
                                     Grid.Column="2"
                                     Foreground="White"
                                     Text="{Binding Path=EndTime}" />
-                                <TextBlock
-                                    Grid.Column="3"
-                                    Foreground="White"
-                                    Text="{Binding Path=IsReturned}" />
                             </Grid>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
