@@ -21,11 +21,11 @@ namespace MiniLibrary
     {
         // SAKER ATT GÖRA:
         //
-        // - 1. - Se till att indexeringen är klar och att det räcker
-        // - 2. - Se till att en borrow_period skapas och läggs till i historiken när man lämnar tillbaka bok
+        // - 1. - Skapa inloggnin där man användare kan registrera sig ! Måste få in ny input i databasen.
         // - 3. - Fixa funktion för att ta bort och redigera customers
-        // - 4. - Fixa en thread som sover till Deadline är nära och skickar en notis till customer
         // - 5. - Skapa en förklaring till varför jag har skapat databasen så som jag har gjort. 
+
+        // - 4. - Fixa en thread som sover till Deadline är nära och skickar en notis till customer
         // - 6. - Kolla över 3NF så att det räcker till: Fungerar min bool i borrowPeriod? Jag tycker själv att den är individuell, men men...
 
         // Saker jag behöver lösa för att få G:
@@ -312,22 +312,22 @@ namespace MiniLibrary
         {
             try
             {
-                Book book = bookList[bookListBox.SelectedIndex];
-                int bookKey = book.Id;
-                int customerKey = loggedInCustomer.Id;
-                if (book.Available == true)
-                {
-                    databaseConnection.AssignBookToCustomer(bookKey, customerKey); //HERE I ALSO NEED TO CHANGE THE AVAILABILITY IN THE DATABASE !!
-                    CustomerBorrowedBooks cbd = new CustomerBorrowedBooks(customerKey, book.Title, DateTime.Now, DateTime.Now.AddMonths(+1), false);
-                    book.Available = false;
-                    customerBorrowedBooksList.Add(cbd);
-                    currentBooksLB.Items.Refresh();
-                    bookListBox.SelectedIndex = -1;
-                }
-                else
-                {
-                    MessageBox.Show("This book is already borrowed");
-                }
+              Book book = bookList[bookListBox.SelectedIndex];
+              int bookKey = book.Id;
+              int customerKey = loggedInCustomer.Id;
+              if (book.Available == true)
+              {
+                  databaseConnection.AssignBookToCustomer(bookKey, customerKey); //HERE I ALSO NEED TO CHANGE THE AVAILABILITY IN THE DATABASE !!
+                  CustomerBorrowedBooks cbd = new CustomerBorrowedBooks(customerKey, book.Title, DateTime.Now, DateTime.Now.AddMonths(+1), false);
+                  book.Available = false;
+                  customerBorrowedBooksList.Add(cbd);
+                  currentBooksLB.Items.Refresh();
+                  bookListBox.SelectedIndex = -1;
+              }
+              else
+              {
+                  MessageBox.Show("This book is already borrowed");
+              }
             }
             catch
             {

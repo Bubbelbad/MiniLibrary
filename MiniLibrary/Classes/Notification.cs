@@ -11,7 +11,6 @@ namespace MiniLibrary.Classes
         public int id { get; set; }
         public DateTime created { get; set; }
         public string type { get; set; }
-        public int customerId { get; set; }
-        public int bookId { get; set; }
+        public int borrow_period { get; set; }
     }
 }

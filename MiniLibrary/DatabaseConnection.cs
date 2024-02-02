@@ -123,6 +123,16 @@ namespace MiniLibrary
             return customerBorrowedBooks;
         }
 
+        public void AssignBookToCustomer(int bookKey, int customerKey)
+        {
+            MySqlConnection connection = new MySqlConnection(connectionString);
+            connection.Open();
+            string query = "CALL customer_borrows_book (" + bookKey + ", " + customerKey + ")";
+            MySqlCommand command = new MySqlCommand(query, connection);
+            int rowsAffected = command.ExecuteNonQuery();
+            connection.Close();
+        }
+
         public void CustomerReturnsBook(int bookId, int customerId)
         {
             MySqlConnection con = new MySqlConnection(connectionString);
@@ -196,16 +206,6 @@ namespace MiniLibrary
             int rowsAffected = command.ExecuteNonQuery();
             connection.Close();
             return rowsAffected > 0;
-        }
-
-        public void AssignBookToCustomer(int bookKey, int customerKey)
-        {
-            MySqlConnection connection = new MySqlConnection(connectionString);
-            connection.Open();  
-            string query = "CALL customer_borrows_book (" + bookKey + ", " + customerKey + ")";
-            MySqlCommand command = new MySqlCommand(query, connection);
-            int rowsAffected = command.ExecuteNonQuery();
-            connection.Close();
         }
 
         public Dictionary<int, Book> SearchBooks(string search)
