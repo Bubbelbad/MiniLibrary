@@ -79,7 +79,7 @@ namespace MiniLibrary
             }
             try
             {
-                //Watch the catch
+                MessageBox.Show("Something went wrong");
             }
             catch (Exception ex) { }
             connection.Close();
@@ -149,7 +149,7 @@ namespace MiniLibrary
         {
             MySqlConnection connection = new MySqlConnection(connectionString);
             connection.Open();
-            string query = "CALL create_new_book(\"" + bookTitle + "\", \"" + bookAuthor + "\", \"" + bookAvailable + "\")";
+            string query = "CALL create_new_book(\"" + bookTitle + "\", \"" + bookAuthor + "\", " + (bookAvailable ? "1" : "0") + ")";
             MySqlCommand command = new MySqlCommand(query, connection);
             MySqlDataReader reader = command.ExecuteReader();
             reader.Read();
@@ -218,14 +218,9 @@ namespace MiniLibrary
             MySqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                Book book = new Book((int)reader["Id"], (string)reader["Title"], (string)reader["Author"], (bool)reader["Avaliable"]);
+                Book book = new Book((int)reader["Id"], (string)reader["Title"], (string)reader["Author"], (bool)reader["Available"]);
                 books.Add(book.Id, book);
             }
-            try
-            {
-                //Watch the catch
-            }
-            catch (Exception ex) { }
             connection.Close();
             return books;
         }

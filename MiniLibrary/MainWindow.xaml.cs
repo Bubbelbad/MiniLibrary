@@ -20,29 +20,27 @@ namespace MiniLibrary
     public partial class MainWindow : Window
     {
         // SAKER ATT GÖRA:
-        //
-        // - 1. - Skapa inloggnin där man användare kan registrera sig ! Måste få in ny input i databasen.
         // - 3. - Fixa funktion för att ta bort och redigera customers
         // - 5. - Skapa en förklaring till varför jag har skapat databasen så som jag har gjort. 
 
         // - 4. - Fixa en thread som sover till Deadline är nära och skickar en notis till customer
         // - 6. - Kolla över 3NF så att det räcker till: Fungerar min bool i borrowPeriod? Jag tycker själv att den är individuell, men men...
 
-        // Saker jag behöver lösa för att få G:
+        // G:
         //
-        // - CHECK - Ett LinkTable (customer_has_book, där man länkar två tabeller). 
-        // - CHECK - Update-function (uppdatera befintlig data)
-        // - CHECK - addBook / addCustomer (lägga till data)
-        // - CHECK - Söka efter information i databasen (sökfältet) 
-        // - CHECK - Ta bort data från databasen
+        // - CHECK - Ett LinkTable (borrow_period - där man länkar customer & book). 
+        // - CHECK - Update-function (uppdatera befintlig data - edit book)
+        // - CHECK - addBook  (lägga till ny data)
+        // - CHECK - Söka efter information i databasen (sökfältet, söka efter böcker) 
+        // - CHECK - Ta bort data från databasen (delete book)
 
-        // Saker jag behöver lösa för att få VG:
+        // VG:
         //
-        // - CHECK - Indexering på en kolumn som används för att söka efter specifika rader
-        // - CHECK - Minst en VIEW
-        // - CHECK - Användare med olika grants
-        // - CHECK - Databasen ska vara i minst 3NF
-        // - CHECK - Minst en STORED PROCEDURE som ska användas i programmet
+        // - CHECK - Indexering på en kolumn som används för att söka efter specifika rader (book table)
+        // - CHECK - Minst en VIEW (customer_borrowed_books)
+        // - CHECK - Användare med olika grants, CRUD (admin har CRUD, user lite färre)
+        // - CHECK - Databasen ska vara i minst 3NF (check på den) 
+        // - CHECK - Minst en STORED PROCEDURE som ska användas i programmet (customer_returns_book, customer_borrows_book, edit_book, create_new_book)
 
 
         DatabaseConnection databaseConnection = new DatabaseConnection();
@@ -74,7 +72,7 @@ namespace MiniLibrary
         }
 
 
-        //SEARCH BAR FUNCTIONS:
+        //--- SEARCH BAR FUNCTIONS:---
 
         //Removes the text in the search-field
         private void btnClear_Click(object sender, RoutedEventArgs e)
@@ -99,7 +97,38 @@ namespace MiniLibrary
             }
         }
 
-        //Button for book-view
+        //Visa rätt Canvas för sökning (bookCanvas):
+        private void txtInput_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (bookCanvas.Visibility == Visibility.Visible)
+            {
+                customerCanvas.Visibility = Visibility.Hidden;
+                addCanvas.Visibility = Visibility.Hidden;
+                currentBooksCanvas.Visibility = Visibility.Hidden;
+                bookCanvas.Visibility = Visibility.Visible;
+                string search = txtInput.Text;
+                searchedBooks = databaseConnection.SearchBooks(search);
+                searchedBookList = searchedBooks.Values.ToList();
+                bookListBox.ItemsSource = searchedBooks.Values;
+                bookListBox.Items.Refresh();
+            }
+            //Här tänkte jag lägga till en searchCustomer senare. (--- NOT IMPLEMENTED YET --- )
+            else if (customerCanvas.Visibility == Visibility.Visible)
+            {
+                customerCanvas.Visibility = Visibility.Hidden;
+                addCanvas.Visibility = Visibility.Hidden;
+                bookCanvas.Visibility = Visibility.Visible;
+                string search = txtInput.Text;
+                searchedBooks = databaseConnection.SearchBooks(search);
+                searchedBookList = searchedBooks.Values.ToList();
+                bookListBox.ItemsSource = searchedBooks.Values;
+                bookListBox.Items.Refresh();
+            }
+        }
+
+        // --- LEFT MENU BUTTONS: --
+
+        //Menbu button for book-view
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             bookCanvas.Visibility = Visibility.Visible;
@@ -114,7 +143,7 @@ namespace MiniLibrary
             currentBooksCanvas.Visibility = Visibility.Hidden;
         }
 
-        //Button for customer-view
+        //Menu button for customer-view
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             customerCanvas.Visibility = Visibility.Visible;
@@ -125,7 +154,7 @@ namespace MiniLibrary
             currentBooksCanvas.Visibility = Visibility.Hidden;
         }
 
-        //Button for current loans-view
+        //Menu button for current loans-view
         private void currentLoansBtn_Click(object sender, RoutedEventArgs e)
         {
             currentBooksLB.Items.Refresh();
@@ -141,6 +170,7 @@ namespace MiniLibrary
             bookCanvas.Visibility = Visibility.Hidden;
         }
 
+        //Menu button for borrow history
         private void menuBorrowHistoryBtn_Click(object sender, RoutedEventArgs e)
         {
             borrowPeriodsLB.Items.Refresh();
@@ -156,35 +186,8 @@ namespace MiniLibrary
             bookCanvas.Visibility = Visibility.Hidden;
         }
 
-        //Söka efter böcker:
-        private void txtInput_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (bookCanvas.Visibility == Visibility.Visible)
-            {
-                customerCanvas.Visibility = Visibility.Hidden;
-                addCanvas.Visibility = Visibility.Hidden;
-                currentBooksCanvas.Visibility = Visibility.Hidden;
-                bookCanvas.Visibility = Visibility.Visible;
-                string search = txtInput.Text;
-                searchedBooks = databaseConnection.SearchBooks(search);
-                searchedBookList = searchedBooks.Values.ToList();
-                bookListBox.ItemsSource = searchedBooks.Values;
-                bookListBox.Items.Refresh();
-            }
-            //Här tänkte jag lägga till en searchCustomer senare. (NOT YET IMPLEMENTED)
-            else if (customerCanvas.Visibility == Visibility.Visible)
-            {
-                customerCanvas.Visibility = Visibility.Hidden;
-                addCanvas.Visibility = Visibility.Hidden;
-                bookCanvas.Visibility = Visibility.Visible;
-                string search = txtInput.Text;
-                searchedBooks = databaseConnection.SearchBooks(search);
-                searchedBookList = searchedBooks.Values.ToList();
-                bookListBox.ItemsSource = searchedBooks.Values;
-                bookListBox.Items.Refresh();
-            }
-            
-        }
+        
+        // --- FUNCTION BUTTONS ON TOP MENU: ----
 
         //Functions to delete a book from library
         private void deleteBtn_Click(object sender, RoutedEventArgs e)
@@ -252,20 +255,17 @@ namespace MiniLibrary
                 customerCanvas.Visibility = Visibility.Hidden;
                 addCanvas.Visibility = Visibility.Hidden;
                 currentBooksCanvas.Visibility = Visibility.Hidden;
-                
                 if (book != null)
                 {
                     titleEditTB.Text = book.Title;
                     authorEditTB.Text = book.Author;
                 }
             }
-
             else if (customerCanvas.Visibility == Visibility.Visible)
             {
                 //Yet to be implemented...
             }
         }
-
 
         //Button for add-view
         private void addBtn_Click(object sender, RoutedEventArgs e)
@@ -409,8 +409,6 @@ namespace MiniLibrary
             btnClear.Visibility = Visibility.Visible;
             borrowBtn.Visibility = Visibility.Visible;
             borrowIcon.Visibility = Visibility.Visible;
-            saveBtn.Visibility = Visibility.Visible;
-            saveIcon.Visibility = Visibility.Visible;
         }
 
         //Function to show the admin-buttons after login
