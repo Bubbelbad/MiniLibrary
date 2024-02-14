@@ -20,28 +20,11 @@ namespace MiniLibrary
     public partial class MainWindow : Window
     {
         // SAKER ATT GÖRA:
-        // - 3. - Fixa funktion för att ta bort och redigera customers
-        // - 5. - Skapa en förklaring till varför jag har skapat databasen så som jag har gjort. 
 
-        // - 4. - Fixa en thread som sover till Deadline är nära och skickar en notis till customer
-        // - 6. - Kolla över 3NF så att det räcker till: Fungerar min bool i borrowPeriod? Jag tycker själv att den är individuell, men men...
-
-        // G:
-        //
-        // - CHECK - Ett LinkTable (borrow_period - där man länkar customer & book). 
-        // - CHECK - Update-function (uppdatera befintlig data - edit book)
-        // - CHECK - addBook  (lägga till ny data)
-        // - CHECK - Söka efter information i databasen (sökfältet, söka efter böcker) 
-        // - CHECK - Ta bort data från databasen (delete book)
-
-        // VG:
-        //
-        // - CHECK - Indexering på en kolumn som används för att söka efter specifika rader (book table)
-        // - CHECK - Minst en VIEW (customer_borrowed_books)
-        // - CHECK - Användare med olika grants, CRUD (admin har CRUD, user lite färre)
-        // - CHECK - Databasen ska vara i minst 3NF (check på den) 
-        // - CHECK - Minst en STORED PROCEDURE som ska användas i programmet (customer_returns_book, customer_borrows_book, edit_book, create_new_book)
-
+        // - 1. - Fixa funktion för att ta bort och redigera customers för admin
+        // - 2. - Se till att Title syns i borrow_history
+        // - 3. - Fixa en threads som sover till Deadline är nära och skickar en notification_message till customer
+        // - 4. - Refactoring och snygga till lite här och där
 
         DatabaseConnection databaseConnection = new DatabaseConnection();
         Dictionary<int, Book> books = new Dictionary<int, Book>();
@@ -63,7 +46,6 @@ namespace MiniLibrary
             bookList = books.Values.ToList();
             bookListBox.ItemsSource = books.Values;
             bookListBox.Items.Refresh();
-
             customers = databaseConnection.GetCustomers();
             customerList = customers.Values.ToList();
             customerListBox.ItemsSource = customers.Values;
@@ -307,7 +289,7 @@ namespace MiniLibrary
         }
 
         //The user chooses a book and borrows it. 
-        //A borrow period of a month is created in AssignBookToCustomer();
+        //A borrow period of a month is Created in AssignBookToCustomer();
         private void borrowBtn_Click(object sender, RoutedEventArgs e)
         {
             try

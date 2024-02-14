@@ -75,7 +75,7 @@ namespace MiniLibrary
             {
                 while (reader.Read())
                 {
-                    Customer customer = new Customer((int)reader["id"], (string)reader["first_name"], (string)reader["last_name"], (string)reader["email"], (string)reader["customer_password"], (string)reader["state"], (bool)reader["admin"]);
+                    Customer customer = new Customer((int)reader["Id"], (string)reader["first_name"], (string)reader["last_name"], (string)reader["email"], (string)reader["customer_password"], (string)reader["state"], (bool)reader["admin"]);
                     customers.Add(customer.Id, customer);
                 }
             }
@@ -93,13 +93,13 @@ namespace MiniLibrary
             List<BorrowPeriod> borrowPeriodList = new List<BorrowPeriod>();
             MySqlConnection con = new MySqlConnection(connectionString);
             con.Open();
-            string query = "SELECT * FROM borrow_period " +
+            string query = "SELECT * FROM Borrow_period " +
                            "WHERE customer_id = " + customerId + " && " + "is_returned = true;";
             MySqlCommand command = new MySqlCommand(@query, con);
             MySqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                BorrowPeriod bp = new BorrowPeriod((int)reader["id"], (DateTime)reader["start_time"], (DateTime)reader["end_time"], (bool)reader["is_returned"], (int)reader["book_id"], (int)reader["customer_id"]);
+                BorrowPeriod bp = new BorrowPeriod((int)reader["Id"], (DateTime)reader["start_time"], (DateTime)reader["end_time"], (bool)reader["is_returned"], (int)reader["book_id"], (int)reader["customer_id"]);
                 borrowPeriodList.Add(bp);
             }
             con.Close();
@@ -112,12 +112,12 @@ namespace MiniLibrary
             MySqlConnection con = new MySqlConnection(connectionString);
             con.Open();
             string query = "SELECT * FROM customer_borrowed_books " + 
-                           "WHERE id = " + id + ";";
+                           "WHERE Id = " + id + ";";
             MySqlCommand command = new MySqlCommand(@query, con);
             MySqlDataReader reader = command.ExecuteReader();
             while (reader.Read())
             {
-                CustomerBorrowedBooks cbb = new CustomerBorrowedBooks((int)reader["id"], (string)reader["Book"], (DateTime)reader["Start_Time"], (DateTime)reader["Deadline"], (bool)reader["Returned"]);
+                CustomerBorrowedBooks cbb = new CustomerBorrowedBooks((int)reader["Id"], (string)reader["Book"], (DateTime)reader["Start_Time"], (DateTime)reader["Deadline"], (bool)reader["Returned"]);
                 customerBorrowedBooks.Add(cbb);
             }
             con.Close();
@@ -191,7 +191,7 @@ namespace MiniLibrary
             MySqlConnection connection = new MySqlConnection(connectionString);
             connection.Open();
             string query = "DELETE FROM book " +
-                           "WHERE id = " + id + ";";
+                           "WHERE Id = " + id + ";";
             MySqlCommand command = new MySqlCommand(query, connection);
             int rowsAffected = command.ExecuteNonQuery();
             connection.Close();
@@ -203,7 +203,7 @@ namespace MiniLibrary
             MySqlConnection connection = new MySqlConnection(connectionString);
             connection.Open();
             string query = "DELETE FROM customer " +
-                           "WHERE id = " + id + ";";
+                           "WHERE Id = " + id + ";";
             MySqlCommand command = new MySqlCommand(query, connection);
             int rowsAffected = command.ExecuteNonQuery();
             connection.Close();
