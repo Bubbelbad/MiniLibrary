@@ -52,7 +52,7 @@ CREATE TABLE borrow_period (
 DROP TABLE IF EXISTS notification;
 CREATE TABLE notification (
 	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    created DATETIME,
+    send_date DATETIME,
     notification_type VARCHAR(45),
     borrow_period_id INT,
     FOREIGN KEY (borrow_period_id) REFERENCES borrow_period(id)
@@ -61,8 +61,25 @@ CREATE TABLE notification (
 
 INSERT INTO customer VALUES (DEFAULT, "admin", "adminsson", "admin", "admin", "approved", true),
 							(DEFAULT, "user", "Svensson", "user", "user", "approved", false),
-							(DEFAULT, "Bengan", "Bentsson", "bengan.bengtsson@example.se", "1234", "approved", false),
-							(DEFAULT, "Farbror", "Barbro", "farbror.barbro@hifiklubben.se", "1234", "denied", false);
+							(DEFAULT, "Bengan", "Bengtsson", "bengan.bengtsson@example.se", "1234", "approved", false),
+							(DEFAULT, "Farbror", "Barbro", "farbror.barbro@hifiklubben.se", "1234", "denied", false),
+                            (DEFAULT, "Al B.", "Bachman", "al.bach.bachman@example.com", "1234", "approved", false),
+                            (DEFAULT, "Candice B.", "DePlace", "candice.b.deplace@example.com", "1234", "approved", false),
+                            (DEFAULT, "Drew", "Peacock", "drew.peacock@example.com", "1234", "approved", false),
+                            (DEFAULT, "Ella", "Vader", "ella.vader@example.com", "1234", "approved", false),
+                            (DEFAULT, "Frank N.", "Stein", "frank.n.stein@example.com", "1234", "approved", false),
+                            (DEFAULT, "Ginger", "Vitis", "ginger.vitis@example.com", "1234", "approved", false),
+                            (DEFAULT, "Ivana", "Tinkle", "ivana.tinkle@example.com", "1234", "approved", false),
+                            (DEFAULT, "Jack", "Pott", "jack.pott@example.com", "1234", "approved", false),
+                            (DEFAULT, "Justin", "Thyme", "justin.thyme@example.com", "1234", "approved", false),
+                            (DEFAULT, "Kurt N.", "Rodd", "kurt.n.rodd@example.com", "1234", "approved", false),
+                            (DEFAULT, "Manny", "Kinn", "manny.kinn@example.com", "1234", "approved", false),
+                            (DEFAULT, "May B.", "Knott", "may.b.knott@example.com", "1234", "approved", false),
+                            (DEFAULT, "Olive", "Yew", "olive.yew@example.com", "1234", "denied", false),
+                            (DEFAULT, "Paige", "Turner", "paige.turner@example.com", "1234", "approved", false),
+                            (DEFAULT, "Phil", "Harmonic", "phil.harmonic@example.com", "1234", "approved", false),
+                            (DEFAULT, "Ray N.", "Carnation", "ray.n.carnation.@example.com", "1234", "approved", false);
+                            
 							
                             
                             
@@ -78,7 +95,17 @@ INSERT INTO book VALUES (DEFAULT, "Weapons of math destruction", "Cathy O'Neil",
 						(DEFAULT, "Snus!", "Mats Jonson", true),
 						(DEFAULT, "Mr. Norell & Jonathan Strange", "Susanna Clarke", true),
 						(DEFAULT, "Konsten att Läsa Tankar", "Henrik Fexeus", true),
-						(DEFAULT, "The Giant Book of Intermediate Classical Piano Music", "G. Schirmer", true);
+						(DEFAULT, "The Giant Book of Intermediate Classical Piano Music", "G. Schirmer", true),
+                        (DEFAULT, "The Hitchhiker's Guide to the Galaxy", "Douglas Adams", true),
+                        (DEFAULT, "The Catcher in the Rye", "J.D. Salinger", true),
+                        (DEFAULT, "The Great Gatsby", "F. Scott Fitzgerald", true),
+                        (DEFAULT, "To Kill a Mockingbird", "Harper Lee", true),
+                        (DEFAULT, "1984", "George Orwell", true),
+                        (DEFAULT, "The Lord of the Rings", "J.R.R. Tolkien", true),
+                        (DEFAULT, "The Hobbit", "J.R.R. Tolkien", true),
+                        (DEFAULT, "The Chronicles of Narnia", "C.S. Lewis", true),
+                        (DEFAULT, "The Da Vinci Code", "Dan Brown", true),
+                        (DEFAULT, "The Girl with the Dragon Tattoo", "Stieg Larsson", true);
 
     
  -- Create new customer   
@@ -132,13 +159,16 @@ CREATE PROCEDURE customer_borrows_book (
 	customer_id INT
     )
     BEGIN 
-		-- INSERT INTO customer_has_book VALUES(book_id, customer_id);
         INSERT INTO borrow_period VALUES(DEFAULT, 
 										NOW(), 
                                         DATE_ADD(NOW(), INTERVAL 30 DAY), 
                                         FALSE, 
                                         book_id, 
                                         customer_id);
+		INSERT INTO notification VALUES(DEFAULT, 
+                                        DATE_ADD(NOW(), INTERVAL 30 DAY), 
+                                        "Your book is due, please return it",
+                                        (SELECT MAX(id) FROM borrow_period));
 		UPDATE book 
         SET book.available = false
         WHERE id = book_id;
@@ -151,13 +181,17 @@ TO 'user'@'localhost';
 DELIMITER $$
 CREATE PROCEDURE customer_returns_book (
 	the_book_id INT,
-	the_customer_id INT
+	the_customer_id INT,
+    the_borrow_period_id INT
     )
-    BEGIN 
-		-- DELETE FROM customer_has_book WHERE book_id = the_book_id && customer_id = the_customer_id;
+    BEGIN
+		DELETE FROM notification WHERE borrow_period_id = the_borrow_period_id;
         UPDATE borrow_period
         SET borrow_period.is_returned = true
-        WHERE book_id = the_book_id && customer_id = the_customer_id; 
+        WHERE borrow_period.id = the_borrow_period_id;
+        UPDATE borrow_period
+        SET borrow_period.end_time = NOW()
+        WHERE borrow_period.id = the_borrow_period_id;
 		UPDATE book 
         SET book.available = true
         WHERE book.id = the_book_id;
@@ -178,3 +212,5 @@ ON bp.customer_id = c.id
 INNER JOIN book b
 ON bp.book_id = b.id
 WHERE bp.is_returned = false;
+
+SELECT * FROM notification;
