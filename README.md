@@ -22,13 +22,13 @@ The hardest part was to figure out a good way of displaying the data from the da
 - When you borrow a book, a borrow period is created along with a notification.
   When you return the book in time, the borrow period is put to history and notification deleted (I still have to code the part that sends the message at sprcific DateTime though)
 
-
+There are some functions that I ditn't implement due to lack of time and prioritizing other project, like deleting and updating customers.
 
 ## Screenshots
 Screenshot from book-view:
 
-![MiniLibrary Screenshot](https://github.com/Bubbelbad/MiniLibrary/blob/master/Screenshot%20MiniLibrary.png)
+![MiniLibrary Screenshot](https://github.com/Bubbelbad/MiniLibrary/blob/master/Screenshot%20-%20Book%20view.png)
 
 Screenshot from EER Diagram:
 
-![EER Diagram Screenshot](https://github.com/Bubbelbad/MiniLibrary/blob/master/EER%20Diagram.png)
+![EER Diagram Screenshot](https://github.com/Bubbelbad/MiniLibrary/blob/master/Screenshot%20-%20EER%20Diagram.png)
