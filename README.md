@@ -8,10 +8,10 @@ My first thought was that this would be a very small test program so I did not b
 
 ## What I've learned
 
-It has been satisfying to grasp linked tables, PK/FK and the benefit of using MySQL to store data. It's my first project so I've got much more to learn, but I've been having a lot of fun with it!
+It has been satisfying to grasp linked tables, PK/FK and the benefit of using MySQL to store data. It's my first project with MySQL and DatabaseConnection so I've got much more to learn, but I've been having a lot of fun with it!
 It was great to reverse engineer the script to compare the model to my pre-made EER diagram. It had a few differences that I had to correct.
 
-The hardest part was to figure out a good way of displaying the data from the database in a convenient way. I still think it could be done better, but I finallly chose to implement a class for my sql view and put the class objects in a list to display in the listbox. 
+The hardest part was to figure out a good way of displaying the data from the database in a dynamic and convenient way.
 
 
 ## Features
