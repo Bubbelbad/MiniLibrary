@@ -29,6 +29,7 @@ namespace MiniLibrary
                 "PASSWORD=" + password + ";";
         }
 
+        //To make sure admins have privileges to edit and remove books & customers
         public DatabaseConnection(bool admin)
         {
             if (admin == true)
@@ -41,6 +42,7 @@ namespace MiniLibrary
             }
         }
 
+        //Importing books from SQL database
         public Dictionary<int, Book> GetBooks()
         {
             Dictionary<int, Book> books = new Dictionary<int, Book>();
@@ -63,6 +65,7 @@ namespace MiniLibrary
             return books;
         }
 
+        //Importing customers from SQL database
         public Dictionary<int, Customer> GetCustomers()
         {
             Dictionary<int, Customer> customers = new Dictionary<int, Customer>();
@@ -87,7 +90,7 @@ namespace MiniLibrary
             return customers;
         }
 
-        //Importing all the past borrow periods
+        //Importing all the past borrow history. Every book that has been returned by the customer and on what date. 
         public List<BorrowPeriod> GetBorrowPeriods(int customerId)
         {
             List<BorrowPeriod> borrowPeriodList = new List<BorrowPeriod>();
@@ -106,6 +109,7 @@ namespace MiniLibrary
             return borrowPeriodList;
         }
 
+        //Lists all the current loans of a customer
         public List<CustomerBorrowedBooks> GetCustomerBorrowedBooks(int id)
         {
             List<CustomerBorrowedBooks> customerBorrowedBooks = new List<CustomerBorrowedBooks>();
@@ -124,6 +128,7 @@ namespace MiniLibrary
             return customerBorrowedBooks;
         }
 
+        //This function refers to when a customer borrows a book
         public void AssignBookToCustomer(int bookKey, int customerKey)
         {
             MySqlConnection connection = new MySqlConnection(connectionString);
@@ -147,6 +152,7 @@ namespace MiniLibrary
             con.Close();
         }
 
+        //Adds a completely new book to the library (admin only)
         public Book AddNewBook(string bookTitle, string bookAuthor, bool bookAvailable)
         {
             MySqlConnection connection = new MySqlConnection(connectionString);
@@ -161,6 +167,7 @@ namespace MiniLibrary
             return book;
         }
 
+        //Edits existing book (admin only)
         public int EditBook(int bookId, string bookTitle, string bookAuthor)
         {
             MySqlConnection connection = new MySqlConnection(connectionString);
@@ -172,6 +179,7 @@ namespace MiniLibrary
             return rowsAffected;
         }
 
+        //Not yet implemented...(this should be like registering or that admin adds someone).
         public Customer AddNewCustomer(string customerName, string customerLastname, string customerEmail, string customerPassword, string customerStatus, bool customerAdmin)
         {
             MySqlConnection connection = new MySqlConnection(connectionString);
@@ -186,6 +194,7 @@ namespace MiniLibrary
             return customer;
         }
 
+        //Deletes book from library (admin only)
         public bool DeleteBook(int id)
         {
             MySqlConnection connection = new MySqlConnection(connectionString);
@@ -198,6 +207,7 @@ namespace MiniLibrary
             return rowsAffected > 0;
         }
 
+        //Deletes customer from library, not yet implemented
         public bool DeleteCustomer(int id)
         {
             MySqlConnection connection = new MySqlConnection(connectionString);
@@ -210,6 +220,7 @@ namespace MiniLibrary
             return rowsAffected > 0;
         }
 
+        //Browse books in library 
         public Dictionary<int, Book> SearchBooks(string search)
         {
             Dictionary<int, Book> books = new Dictionary<int, Book>();
